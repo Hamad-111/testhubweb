@@ -20,6 +20,7 @@ export default function Sidebar({ role, userName, isOpen = false, onClose }: Sid
         { name: "Home", icon: "🏠", href: "/dashboard/student" },
         { name: "Discover", icon: "🧭", href: "/dashboard/student/discover" },
         { name: "Library", icon: "📚", href: "/dashboard/student/library" },
+        { name: "Notes", icon: "📝", href: "/dashboard/student/notes" },
         { name: "Reports", icon: "📊", href: "/dashboard/student/reports" },
         { name: "Subscription", icon: "💎", href: "/dashboard/subscription" },
         { name: "Settings", icon: "⚙️", href: "/dashboard/settings" },
