@@ -429,7 +429,7 @@ const Pricing = () => {
     },
     {
       name: "Pro",
-      price: "$9.99",
+      price: "Rs. 5,000",
       period: "/month",
       desc: "Best for active teachers who want the full AI power.",
       features: ["Unlimited AI Generations", "Up to 200 players per game", "Advanced reports & insights", "Priority email support", "Custom quiz branding"],
@@ -491,8 +491,8 @@ const Pricing = () => {
               <Link
                 href="/login"
                 className={`block w-full text-center py-4 rounded-2xl font-black transition-all ${plan.premium
-                    ? 'bg-primary text-white shadow-lg hover:bg-purple-700 hover:shadow-primary/30'
-                    : 'bg-gray-50 text-gray-900 hover:bg-gray-100'
+                  ? 'bg-primary text-white shadow-lg hover:bg-purple-700 hover:shadow-primary/30'
+                  : 'bg-gray-50 text-gray-900 hover:bg-gray-100'
                   }`}
               >
                 {plan.cta}

@@ -81,7 +81,7 @@ export default function PrivacyPage() {
                         <section className="bg-gray-50 p-8 rounded-3xl border border-gray-100">
                             <h2 className="text-xl font-bold text-gray-900 mb-4">Contact Us</h2>
                             <p className="mb-0">
-                                If you have any questions about our Privacy Policy, please contact us at <a href="mailto:shakirullah1515@gmail.com" className="text-primary font-bold">shakirullah1515@gmail.com</a>
+                                If you have any questions about our Privacy Policy, please contact us at <a href="mailto:hadekhan681@gmail.com" className="text-primary font-bold">hadekhan681@gmail.com</a>
                             </p>
                         </section>
                     </div>

@@ -24,13 +24,13 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
             monthly: {
                 id: 'premium_monthly',
                 name: 'Premium Monthly',
-                price: 1500, // PKR
+                price: 5000, // PKR
                 period: 'month'
             },
             yearly: {
                 id: 'premium_yearly',
                 name: 'Premium Yearly',
-                price: 15000, // PKR
+                price: 50000, // PKR (10 months price)
                 period: 'year'
             }
         },

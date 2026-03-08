@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     if (userDoc.exists()) {
                         const userData = userDoc.data();
                         console.log("User document found:", userData);
-                        const isAdmin = firebaseUser.email === "shakirullah1515@gmail.com";
+                        const isAdmin = firebaseUser.email === "hadekhan681@gmail.com";
                         setUser({
                             uid: firebaseUser.uid,
                             email: firebaseUser.email,
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     } else {
                         console.log("No user document found. Attempting to create one...");
                         try {
-                            const isAdmin = firebaseUser.email === "shakirullah1515@gmail.com";
+                            const isAdmin = firebaseUser.email === "hadekhan681@gmail.com";
                             const newUserData = {
                                 name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Teacher",
                                 email: firebaseUser.email,
