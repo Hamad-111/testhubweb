@@ -50,7 +50,7 @@ export default function SupportPage() {
                             <h3 className="text-2xl font-bold mb-4">Email Support</h3>
                             <p className="text-gray-500 mb-8">Send us an email anytime and we'll get back to you within 24 hours.</p>
                             <a href="mailto:hadekhan681@gmail.com" className="text-xl font-bold text-primary hover:underline">
-                                shakirullah1515@gmail.com
+                                hadekhan681@gmail.com
                             </a>
                         </div>
 
