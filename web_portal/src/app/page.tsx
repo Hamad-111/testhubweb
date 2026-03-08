@@ -52,6 +52,12 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
+            <Link href="/#features" className="text-white/90 hover:text-white font-medium transition-colors">
+              Features
+            </Link>
+            <Link href="/#pricing" className="text-white/90 hover:text-white font-medium transition-colors">
+              Pricing
+            </Link>
             <Link href="/join" className="text-white/90 hover:text-white font-medium transition-colors flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
               Join Game
@@ -207,7 +213,7 @@ const TrendingQuizzes = () => {
 
 const Features = () => {
   return (
-    <section className="py-24 bg-white">
+    <section id="features" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-black text-gray-900 mb-4">Why Teachers Love Test Hub</h2>
@@ -411,6 +417,94 @@ const AISection = () => {
   );
 };
 
+const Pricing = () => {
+  const plans = [
+    {
+      name: "Basic",
+      price: "Free",
+      desc: "Perfect for trying out Test Hub with your class.",
+      features: ["3 AI Generations daily", "Up to 50 players per game", "Basic analytics", "Standard support"],
+      cta: "Current Plan",
+      premium: false
+    },
+    {
+      name: "Pro",
+      price: "$9.99",
+      period: "/month",
+      desc: "Best for active teachers who want the full AI power.",
+      features: ["Unlimited AI Generations", "Up to 200 players per game", "Advanced reports & insights", "Priority email support", "Custom quiz branding"],
+      cta: "Upgrade to Pro",
+      premium: true
+    },
+    {
+      name: "School",
+      price: "Custom",
+      desc: "For entire departments and schools looking for scale.",
+      features: ["Everything in Pro", "School-wide collaboration", "SSO integration", "Dedicated success manager", "LMS Integration"],
+      cta: "Contact Sales",
+      premium: false
+    }
+  ];
+
+  return (
+    <section id="pricing" className="py-24 bg-gray-50 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-black text-gray-900 mb-4">Simple, Transparent Pricing</h2>
+          <p className="text-gray-600 font-medium max-w-2xl mx-auto">
+            Choose the plan that's right for you and your students. No hidden fees.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {plans.map((plan, i) => (
+            <div
+              key={i}
+              className={`p-8 rounded-[2.5rem] bg-white border transition-all duration-300 relative hover:shadow-2xl hover:-translate-y-2 ${plan.premium ? 'border-primary ring-4 ring-primary/5 shadow-xl' : 'border-gray-100 shadow-sm'
+                }`}
+            >
+              {plan.premium && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1.5 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-full">
+                  Most Popular
+                </div>
+              )}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                <div className="flex items-baseline gap-1 mb-4">
+                  <span className="text-4xl font-black text-gray-900">{plan.price}</span>
+                  {plan.period && <span className="text-gray-500 font-bold">{plan.period}</span>}
+                </div>
+                <p className="text-gray-500 text-sm leading-relaxed">{plan.desc}</p>
+              </div>
+
+              <div className="space-y-4 mb-10">
+                {plan.features.map((feature, j) => (
+                  <div key={j} className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full bg-green-50 flex items-center justify-center text-green-500 flex-shrink-0">
+                      <Check size={12} strokeWidth={3} />
+                    </div>
+                    <span className="text-sm text-gray-600 font-medium">{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Link
+                href="/login"
+                className={`block w-full text-center py-4 rounded-2xl font-black transition-all ${plan.premium
+                    ? 'bg-primary text-white shadow-lg hover:bg-purple-700 hover:shadow-primary/30'
+                    : 'bg-gray-50 text-gray-900 hover:bg-gray-100'
+                  }`}
+              >
+                {plan.cta}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const CTA = () => {
   return (
     <section className="py-24 bg-gradient-to-br from-[#7C4DFF] to-[#651fff] text-center relative overflow-hidden">
@@ -444,13 +538,13 @@ const Footer = () => {
         </div>
 
         <div className="flex justify-center gap-8 text-sm text-gray-500 mb-8">
-          <a href="#" className="hover:text-primary">About Us</a>
-          <a href="#" className="hover:text-primary">Features</a>
-          <a href="#" className="hover:text-primary">Pricing</a>
-          <a href="#" className="hover:text-primary">Privacy</a>
-          <a href="#" className="hover:text-primary">Terms</a>
-          <a href="/login" className="hover:text-primary font-bold">Admin Portal</a>
-          <a href="#" className="hover:text-primary">Support</a>
+          <Link href="/about" className="hover:text-primary transition-colors">About Us</Link>
+          <Link href="/#features" className="hover:text-primary transition-colors">Features</Link>
+          <Link href="/#pricing" className="hover:text-primary transition-colors">Pricing</Link>
+          <Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
+          <Link href="/terms" className="hover:text-primary transition-colors">Terms</Link>
+          <a href="/login" className="hover:text-primary font-bold transition-colors">Admin Portal</a>
+          <Link href="/support" className="hover:text-primary transition-colors">Support</Link>
         </div>
 
         <p className="text-gray-400 text-sm">© 2025 Test Hub. All rights reserved.</p>
@@ -467,6 +561,7 @@ export default function LandingPage() {
       <TrendingQuizzes />
       <Features />
       <AISection />
+      <Pricing />
       <CTA />
       <Footer />
     </div>
