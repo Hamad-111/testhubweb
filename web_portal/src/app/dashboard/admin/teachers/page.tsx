@@ -36,10 +36,16 @@ export default function TeacherManagement() {
     const toggleStatus = async (teacherId: string, currentStatus: string) => {
         const newStatus = currentStatus === "active" ? "suspended" : "active";
         try {
-            await updateDoc(doc(db, "users", teacherId), { status: newStatus });
-            setTeachers(teachers.map(t => t.id === teacherId ? { ...t, status: newStatus } : t));
-        } catch (error) {
-            alert("Failed to update status");
+            const updates: any = { status: newStatus };
+            if (newStatus === "active" && currentStatus === "pending") {
+                updates.approvedAt = new Date().toISOString(); // Using ISO string to match Flutter's preference for some fields if needed, or serverTimestamp for others.
+            }
+
+            await updateDoc(doc(db, "users", teacherId), updates);
+            setTeachers(teachers.map(t => t.id === teacherId ? { ...t, ...updates } : t));
+        } catch (error: any) {
+            console.error("Error updating teacher status:", error);
+            alert(`Failed to update status: ${error.message || "Unknown error"}`);
         }
     };
 
@@ -92,8 +98,8 @@ export default function TeacherManagement() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase ${teacher.status === "active" ? "bg-green-100 text-green-700" :
-                                                    teacher.status === "pending" ? "bg-yellow-100 text-yellow-700" :
-                                                        "bg-red-100 text-red-700"
+                                                teacher.status === "pending" ? "bg-yellow-100 text-yellow-700" :
+                                                    "bg-red-100 text-red-700"
                                                 }`}>
                                                 {teacher.status || "Active"}
                                             </span>

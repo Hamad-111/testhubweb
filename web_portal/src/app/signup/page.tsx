@@ -38,6 +38,7 @@ export default function Signup() {
                 email: user.email,
                 name: name,
                 role: selectedRole,
+                status: selectedRole === 'instructor' ? 'pending' : 'active',
                 createdAt: serverTimestamp(),
                 subscriptionStatus: 'inactive',
                 planId: 'free'
