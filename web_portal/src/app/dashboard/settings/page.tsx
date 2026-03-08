@@ -12,6 +12,7 @@ export default function SettingsPage() {
     const [displayName, setDisplayName] = useState("");
     const [updating, setUpdating] = useState(false);
     const [message, setMessage] = useState({ type: "", text: "" });
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -21,8 +22,6 @@ export default function SettingsPage() {
 
     if (loading) return <div className="flex h-screen items-center justify-center font-bold text-primary">Loading...</div>;
     if (!user) return <div className="p-8 font-bold text-red-500">Access Denied</div>;
-
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
