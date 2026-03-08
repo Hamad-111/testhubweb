@@ -32,7 +32,8 @@ export default function SettingsPage() {
         setUpdating(true);
         setMessage({ type: "", text: "" });
         try {
-            await updateProfile(user, { displayName });
+            if (!auth.currentUser) throw new Error("No authenticated user found");
+            await updateProfile(auth.currentUser, { displayName });
             setMessage({ type: "success", text: "Profile updated successfully!" });
         } catch (error) {
             console.error(error);
