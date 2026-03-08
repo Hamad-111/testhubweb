@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description: "Create engaging quizzes with AI in seconds and host live games that students absolutely love.",
   icons: {
     icon: '/app_icon.png',
+    apple: '/app_icon.png',
   },
 };
 
