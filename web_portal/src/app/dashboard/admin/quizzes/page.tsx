@@ -66,6 +66,25 @@ export default function AdminQuizManagement() {
         }
     };
 
+    const handleClearAll = async () => {
+        if (!confirm("🚨 CRITICAL WARNING: This will PERMANENTLY DELETE ALL QUIZZES from the entire platform! This action is IRREVERSIBLE. Are you ABSOLUTELY sure?")) return;
+        if (!confirm("FINAL CONFIRMATION: Are you certain you want to wipe the entire quiz database? This cannot be undone.")) return;
+
+        setLoadingData(true);
+        try {
+            const snapshot = await getDocs(collection(db, "quizzes"));
+            const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+            await Promise.all(deletePromises);
+            setQuizzes([]);
+            alert("✅ Success: The quiz database has been completely cleared.");
+        } catch (error: any) {
+            console.error("Error clearing quizzes:", error);
+            alert(`Failed to clear quizzes: ${error.message}`);
+        } finally {
+            setLoadingData(false);
+        }
+    };
+
     const formatDate = (timestamp: any) => {
         if (!timestamp) return "N/A";
         const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -115,13 +134,23 @@ export default function AdminQuizManagement() {
                             <h1 className="text-3xl font-black text-[#1F2937]">Quiz Repository</h1>
                             <p className="text-gray-500 mt-1">Monitor and control all quizzes across the platform.</p>
                         </div>
-                        <button
-                            onClick={fetchAllQuizzes}
-                            className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 transition-all text-[#46178f]"
-                            title="Refresh Data"
-                        >
-                            <RefreshCcw size={20} />
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleClearAll}
+                                className="bg-red-50 px-4 py-2 rounded-xl border border-red-100 text-red-600 font-bold hover:bg-red-100 transition-all flex items-center gap-2 text-sm shadow-sm"
+                                title="Clear All Quizzes"
+                            >
+                                <Trash2 size={18} />
+                                Clear All Quizzes
+                            </button>
+                            <button
+                                onClick={fetchAllQuizzes}
+                                className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 transition-all text-[#46178f]"
+                                title="Refresh Data"
+                            >
+                                <RefreshCcw size={20} />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Search Bar */}
