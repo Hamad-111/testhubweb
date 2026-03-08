@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/Sidebar";
-import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Search, Trash2, Pause, Play, StopCircle, RefreshCcw, MoreVertical, ExternalLink } from "lucide-react";
 import Link from "next/link";
@@ -57,29 +57,64 @@ export default function AdminQuizManagement() {
     };
 
     const handleDelete = async (quizId: string) => {
-        if (!confirm("⚠️ DANGER: Are you sure you want to PERMANENTLY delete this quiz? This action cannot be undone and it will be removed from all accounts.")) return;
+        if (!confirm("⚠️ DANGER: Are you sure you want to PERMANENTLY delete this quiz and ALL associated results? This action cannot be undone.")) return;
+
+        setLoadingData(true);
         try {
+            // 1. Delete all results associated with this quiz
+            const resultsQuery = query(collection(db, "quiz_results"), where("quizId", "==", quizId));
+            const resultsSnapshot = await getDocs(resultsQuery);
+            const deleteResultsPromises = resultsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+            await Promise.all(deleteResultsPromises);
+
+            // 2. Delete the quiz itself
             await deleteDoc(doc(db, "quizzes", quizId));
+
             setQuizzes(quizzes.filter(q => q.id !== quizId));
-        } catch (error) {
-            alert("Failed to delete quiz");
+            alert("✅ Quiz and all associated results deleted successfully.");
+        } catch (error: any) {
+            console.error("Error deleting quiz:", error);
+            alert(`Failed to delete quiz: ${error.message}`);
+        } finally {
+            setLoadingData(false);
         }
     };
 
     const handleClearAll = async () => {
-        if (!confirm("🚨 CRITICAL WARNING: This will PERMANENTLY DELETE ALL QUIZZES from the entire platform! This action is IRREVERSIBLE. Are you ABSOLUTELY sure?")) return;
-        if (!confirm("FINAL CONFIRMATION: Are you certain you want to wipe the entire quiz database? This cannot be undone.")) return;
+        if (!confirm("🚨 CRITICAL WARNING: This will PERMANENTLY DELETE ALL QUIZZES, ALL RESULTS, and RESET ALL STUDENT STATS from the entire platform! This action is IRREVERSIBLE. Are you ABSOLUTELY sure?")) return;
+        if (!confirm("FINAL CONFIRMATION: Are you certain you want to wipe the entire database? This cannot be undone.")) return;
 
         setLoadingData(true);
         try {
-            const snapshot = await getDocs(collection(db, "quizzes"));
-            const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
-            await Promise.all(deletePromises);
+            // 1. Clear all quizzes
+            const quizSnapshot = await getDocs(collection(db, "quizzes"));
+            const deleteQuizPromises = quizSnapshot.docs.map(doc => deleteDoc(doc.ref));
+
+            // 2. Clear all results
+            const resultsSnapshot = await getDocs(collection(db, "quiz_results"));
+            const deleteResultsPromises = resultsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+
+            // 3. Reset student stats (quizzesTaken and totalScore)
+            const studentsQuery = query(collection(db, "users"), where("role", "==", "student"));
+            const studentsSnapshot = await getDocs(studentsQuery);
+            const resetStatsPromises = studentsSnapshot.docs.map(docRef =>
+                updateDoc(docRef.ref, {
+                    totalScore: 0,
+                    quizzesTaken: 0
+                })
+            );
+
+            await Promise.all([
+                ...deleteQuizPromises,
+                ...deleteResultsPromises,
+                ...resetStatsPromises
+            ]);
+
             setQuizzes([]);
-            alert("✅ Success: The quiz database has been completely cleared.");
+            alert("✅ Success: The database has been completely cleared and student stats have been reset.");
         } catch (error: any) {
-            console.error("Error clearing quizzes:", error);
-            alert(`Failed to clear quizzes: ${error.message}`);
+            console.error("Error clearing database:", error);
+            alert(`Failed to clear database: ${error.message}`);
         } finally {
             setLoadingData(false);
         }
