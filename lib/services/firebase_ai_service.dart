@@ -188,29 +188,61 @@ Make sure:
     }
   }
 
-  /// Analyze document content
-  Future<String> analyzeDocument(String content) async {
+  /// Analyze document content with specific note type
+  Future<String> analyzeDocument(String content, {String noteType = 'summary'}) async {
     try {
-      debugPrint('[v0] 🤖 Starting document analysis...');
-      debugPrint('[v0] 📄 Content length: ${content.length} characters');
+      debugPrint('[v0] 🤖 Starting document analysis ($noteType)...');
+      
+      String prompt;
+      switch (noteType) {
+        case 'detailed':
+          prompt = '''
+Generate highly detailed, comprehensive study notes from the following text. 
+Break it down into logical sections with clear headings. 
+Explain complex concepts in depth. Inclusion of examples and context is essential.
+Format with markdown.
 
-      final prompt = '''
-Please analyze the following document and provide:
-1. Key Topics/Concepts (bullet points)
-2. Important Terms and Definitions
-3. Main Ideas and Summary
-4. Potential Quiz Questions
-
-Document Content:
+Text:
 $content
+''';
+          break;
+        case 'keyPoints':
+          prompt = '''
+Extract the most important key points and elite takeaways from the following text.
+Format as a bulleted list. 
+Focus only on high-level concepts and critical facts.
+Format with markdown.
 
-Provide a comprehensive analysis that can be used to generate educational quiz questions.
-      ''';
+Text:
+$content
+''';
+          break;
+        case 'qa':
+          prompt = '''
+Generate a list of challenging Q&A pairs (study questions) based on the following text.
+Format as:
+Q: [Question]
+A: [Answer]
+Ensure the questions test deep understanding, not just surface facts.
+Format with markdown.
 
-      debugPrint('[v0] 📤 Sending request to Groq API...');
+Text:
+$content
+''';
+          break;
+        case 'summary':
+        default:
+          prompt = '''
+Provide a concise but thorough summary of the following document.
+Highlight the main theme and the primary findings or ideas.
+Format with markdown.
+
+Text:
+$content
+''';
+      }
+
       final response = await _generateContent(prompt);
-
-      debugPrint('[v0] ✅ Received response from Groq API');
       return response;
     } catch (e) {
       debugPrint('[v0] ❌ Document analysis error: $e');

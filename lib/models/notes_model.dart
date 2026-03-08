@@ -12,6 +12,7 @@ class Note {
   final DateTime createdAt;
   final DateTime? lastModified;
   final bool isPersonal;
+  final String? noteType; // summary, detailed, keyPoints, qa
   final List<String> sharedWith; // User IDs
 
   Note({
@@ -26,6 +27,7 @@ class Note {
     required this.createdAt,
     this.lastModified,
     required this.isPersonal,
+    this.noteType,
     required this.sharedWith,
   });
 
@@ -42,6 +44,7 @@ class Note {
       'createdAt': createdAt.toIso8601String(),
       'lastModified': lastModified?.toIso8601String(),
       'isPersonal': isPersonal,
+      'noteType': noteType,
       'sharedWith': sharedWith,
     };
   }
@@ -63,6 +66,7 @@ class Note {
           ? DateTime.parse(map['lastModified'])
           : null,
       isPersonal: map['isPersonal'] ?? true,
+      noteType: map['noteType'],
       sharedWith: List<String>.from(map['sharedWith'] ?? []),
     );
   }

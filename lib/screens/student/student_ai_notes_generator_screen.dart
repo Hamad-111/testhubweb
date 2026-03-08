@@ -4,6 +4,9 @@ import '../../services/firebase_ai_service.dart';
 import '../../services/file_service.dart';
 import '../../services/firebase_note_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class StudentAINotesGeneratorScreen extends StatefulWidget {
   const StudentAINotesGeneratorScreen({super.key});
@@ -14,6 +17,7 @@ class StudentAINotesGeneratorScreen extends StatefulWidget {
 
 class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorScreen>
     with SingleTickerProviderStateMixin {
+  String _selectedNoteType = 'summary';
   String? _selectedFilePath;
   String? _fileContent;
   String _noteTitle = '';
@@ -23,6 +27,13 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
   late AnimationController _fadeController;
   late FirebaseAIService _aiService;
   late FirebaseNoteService _noteService;
+
+  final List<Map<String, String>> _noteTypes = [
+    {'id': 'summary', 'label': 'Summary', 'icon': '📝'},
+    {'id': 'detailed', 'label': 'Detailed', 'icon': '📚'},
+    {'id': 'keyPoints', 'label': 'Key Points', 'icon': '💡'},
+    {'id': 'qa', 'label': 'Q&A Style', 'icon': '❓'},
+  ];
 
   @override
   void initState() {
@@ -69,7 +80,7 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
     setState(() => _isProcessing = true);
 
     try {
-      final summary = await _aiService.analyzeDocument(_fileContent!);
+      final summary = await _aiService.analyzeDocument(_fileContent!, noteType: _selectedNoteType);
       setState(() => _generatedSummary = summary);
       
       if (mounted) {
@@ -88,6 +99,35 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
     }
   }
 
+  Future<void> _downloadNotes() async {
+    if (_generatedSummary == null) return;
+    try {
+      final pdf = pw.Document();
+      pdf.addPage(
+        pw.Page(
+          build: (pw.Context context) => pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(_noteTitle, style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+              pw.Text('Source: ${_selectedFilePath?.split('/').last ?? "Unknown"}'),
+              pw.Text('Type: $_selectedNoteType'),
+              pw.Divider(),
+              pw.SizedBox(height: 20),
+              pw.Text(_generatedSummary!),
+            ],
+          ),
+        ),
+      );
+
+      await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Download failed: $e'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   Future<void> _saveNote() async {
     if (_generatedSummary == null) return;
 
@@ -101,10 +141,11 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
         userId: user.uid,
         sourceFileName: _selectedFilePath?.split('/').last,
         content: _generatedSummary!,
-        keyPoints: [], // Extract from summary if needed
+        keyPoints: [], 
         boldedTerms: [],
         createdAt: DateTime.now(),
         isPersonal: true,
+        noteType: _selectedNoteType,
         sharedWith: [],
       );
 
@@ -112,9 +153,8 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Notes saved to your collection!'), backgroundColor: Colors.green),
+          const SnackBar(content: Text('Notes saved to your library!'), backgroundColor: Colors.green),
         );
-        Navigator.pop(context); // Go back to dashboard/notes list
       }
     } catch (e) {
       if (mounted) {
@@ -172,6 +212,43 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
                   ],
                 ),
               ),
+              _buildSection(
+                title: '📋 Choose Note Type',
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: _noteTypes.map((type) {
+                    final isSelected = _selectedNoteType == type['id'];
+                    return InkWell(
+                      onTap: () => setState(() => _selectedNoteType = type['id']!),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isSelected ? const Color(0xFF00BCD4) : Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isSelected ? const Color(0xFF00BCD4) : Colors.grey.shade300,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(type['icon']!, style: const TextStyle(fontSize: 16)),
+                            const SizedBox(width: 8),
+                            Text(
+                              type['label']!,
+                              style: TextStyle(
+                                color: isSelected ? Colors.white : Colors.black87,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
               const SizedBox(height: 20),
               if (_selectedFilePath != null && _generatedSummary == null)
                 SizedBox(
@@ -186,6 +263,7 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00BCD4),
                       foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     ),
                   ),
                 ),
@@ -197,6 +275,7 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
                     children: [
                       Container(
                         padding: const EdgeInsets.all(15),
+                        width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.grey.shade50,
                           borderRadius: BorderRadius.circular(10),
@@ -214,10 +293,24 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
                             child: ElevatedButton.icon(
                               onPressed: _isLoading ? null : _saveNote,
                               icon: const Icon(Icons.save),
-                              label: const Text('Save to My Notes'),
+                              label: const Text('Save'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF4CAF50),
                                 foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: _isLoading ? null : _downloadNotes,
+                              icon: const Icon(Icons.download),
+                              label: const Text('Download'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               ),
                             ),
                           ),
