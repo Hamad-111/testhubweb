@@ -66,6 +66,15 @@ export default function AdminQuizManagement() {
         }
     };
 
+    const formatDate = (timestamp: any) => {
+        if (!timestamp) return "N/A";
+        const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+        return new Intl.DateTimeFormat("en-PK", {
+            dateStyle: "medium",
+            timeStyle: "short",
+        }).format(date);
+    };
+
     const filteredQuizzes = quizzes.filter(quiz =>
         quiz.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         quiz.instructorName?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -135,6 +144,7 @@ export default function AdminQuizManagement() {
                                 <thead className="bg-gray-50 border-b border-gray-100">
                                     <tr>
                                         <th className="px-6 py-4 font-bold text-gray-700 text-sm">Quiz Details</th>
+                                        <th className="px-6 py-4 font-bold text-gray-700 text-sm">Created At</th>
                                         <th className="px-6 py-4 font-bold text-gray-700 text-sm">Instructor</th>
                                         <th className="px-6 py-4 font-bold text-gray-700 text-sm">Status</th>
                                         <th className="px-6 py-4 font-bold text-gray-700 text-sm">Stats</th>
@@ -144,7 +154,7 @@ export default function AdminQuizManagement() {
                                 <tbody className="divide-y divide-gray-100">
                                     {filteredQuizzes.length === 0 ? (
                                         <tr>
-                                            <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                                            <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                                                 <div className="flex flex-col items-center gap-2">
                                                     <span className="text-4xl italic opacity-50">📝</span>
                                                     <p className="font-bold">No quizzes found matching your search.</p>
@@ -158,6 +168,12 @@ export default function AdminQuizManagement() {
                                                     <div>
                                                         <span className="font-black text-gray-900 block group-hover:text-[#46178f] transition-colors">{quiz.title}</span>
                                                         <span className="text-xs text-gray-400 font-mono mt-1 opacity-60">ID: {quiz.id.substring(0, 8)}...</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-bold text-gray-700">{formatDate(quiz.createdAt)}</span>
+                                                        <span className="text-[10px] text-gray-400 font-medium">PKST Time</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
