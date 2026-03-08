@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 
 interface AppUser {
     uid: string;
@@ -36,11 +36,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         const userData = userDoc.data();
                         console.log("User document found:", userData);
                         const isAdmin = firebaseUser.email === "hadekhan681@gmail.com" || firebaseUser.email === "shakirullah1515@gmail.com";
+                        const currentRole = userData.role || "instructor";
+
+                        // Sync role if it's hardcoded as admin but not in DB
+                        if (isAdmin && currentRole !== "admin") {
+                            console.log("Syncing admin role to Firestore...");
+                            await updateDoc(userDocRef, { role: "admin" });
+                        }
+
                         setUser({
                             uid: firebaseUser.uid,
                             email: firebaseUser.email,
                             displayName: userData.name || firebaseUser.displayName,
-                            role: (isAdmin ? "admin" : (userData.role || "instructor")) as any,
+                            role: (isAdmin ? "admin" : currentRole) as any,
                             subscriptionStatus: userData.subscriptionStatus || "inactive",
                             planId: userData.planId
                         });
