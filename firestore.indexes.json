@@ -1,0 +1,61 @@
+{
+    "indexes": [
+        {
+            "collectionGroup": "quizzes",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "instructorId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "quiz_results",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "instructorId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "completedAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "quiz_results",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "studentId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "completedAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "users",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "role",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "totalScore",
+                    "order": "DESCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": []
+}

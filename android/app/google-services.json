@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "591676704670",
+    "project_id": "testhub2-project",
+    "storage_bucket": "testhub2-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591676704670:android:8de0b46b77c7d02c3e388f",
+        "android_client_info": {
+          "package_name": "com.testhub2.testhub2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtGfVD_O5JyJINB1vNn2-eAT9ik4NRbxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,37 @@
+
+# Node / Web Portal
+web_portal/node_modules/
+web_portal/.next/
+web_portal/out/
+web_portal/build/
+web_portal/.vercel/
+web_portal/.env.local
+web_portal/.env.development.local
+web_portal/.env.test.local
+web_portal/.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+android/local.properties
+.idea/
+.vscode/
+*.iml
+
+# Firebase
+firebase-debug.log
+.firebase/
+
+# OS
+.DS_Store
+Thumbs.db
+node_modules
+web_portal/service-account.json

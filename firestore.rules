@@ -1,0 +1,79 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'shakirullah1515@gmail.com';
+    }
+
+    // Helper to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Diagnostic collection: Allow anyone to read/write for testing connectivity
+    match /_test_connection/{docId} {
+      allow read, write: if true;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // ULTRA-PERMISSIVE for debugging only
+      allow read: if true;
+      allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+    }
+
+    // Quizzes collection
+    match /quizzes/{quizId} {
+      // Allow any user to read quizzes (necessary for /play/[pin] direct access)
+      allow read: if true;
+      // Allow instructors to create, update, and delete quizzes they own
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && (
+        isAdmin() ||
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'instructor')
+      );
+    }
+
+    // Quiz Results collection
+    match /quiz_results/{resultId} {
+      // Allow any authenticated user to read results for leaderboard purposes
+      allow read: if request.auth != null;
+      // Students can create results when they finish
+      allow create: if request.auth != null;
+      // Only admins can delete
+      allow delete: if isAdmin();
+      // Updates usually not needed for results, but allow admin
+      allow update: if isAdmin();
+    }
+
+    // Subscription Requests collection
+    match /subscription_requests/{requestId} {
+      // Users can see their own requests
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      // Users can create requests
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      // Only admins can update (approve/reject)
+      allow update: if isAdmin();
+    }
+
+    // Classes collection
+    match /classes/{classId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'instructor' || isAdmin());
+    }
+
+    // Notes collection
+    match /notes/{noteId} {
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Default: deny everything else
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
