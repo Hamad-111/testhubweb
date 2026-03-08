@@ -8,10 +8,6 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Test Hub - AI Powered Learning",
   description: "Create engaging quizzes with AI in seconds and host live games that students absolutely love.",
-  icons: {
-    icon: '/app_icon.png',
-    apple: '/app_icon.png',
-  },
 };
 
 export default function RootLayout({
