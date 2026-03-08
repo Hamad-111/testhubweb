@@ -20,12 +20,9 @@ export default function SettingsPage() {
     }, [user]);
 
     if (loading) return <div className="flex h-screen items-center justify-center font-bold text-primary">Loading...</div>;
-    if (!user) return <div className="p-8">Access Denied</div>;
+    if (!user) return <div className="p-8 font-bold text-red-500">Access Denied</div>;
 
-    // Determine the role for the sidebar based on URL or user data
-    // For now, we can infer it or just pass a generic one. 
-    // Usually, the app should know the role. 
-    const role = user.email === "shakirullah1515@gmail.com" ? "admin" : "instructor"; // Simplified for now
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -60,9 +57,29 @@ export default function SettingsPage() {
 
     return (
         <div className="flex min-h-screen bg-gray-50">
-            <Sidebar role={role} userName={user.displayName || "User"} />
+            <Sidebar
+                role={user.role}
+                userName={user.displayName || "User"}
+                isOpen={isSidebarOpen}
+                onClose={() => setSidebarOpen(false)}
+            />
 
-            <main className="flex-1 ml-64 p-8">
+            <main className="flex-1 md:ml-64 p-4 md:p-8 w-full">
+                {/* Mobile Header */}
+                <div className="md:hidden flex items-center justify-between mb-6 bg-white p-4 rounded-xl shadow-sm">
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        className="text-[#46178f]"
+                        title="Open Menu"
+                        aria-label="Open Menu"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <span className="font-black text-xl text-[#46178f]">Settings</span>
+                    <div className="w-8 h-8 rounded bg-[#1368ce] flex items-center justify-center text-white font-bold text-sm">
+                        {user.displayName?.charAt(0).toUpperCase() || "U"}
+                    </div>
+                </div>
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-8">
                         <h1 className="text-3xl font-black text-gray-900">Settings</h1>
@@ -158,7 +175,7 @@ export default function SettingsPage() {
                                     <Shield size={32} />
                                 </div>
                                 <h3 className="text-xl font-bold mb-2">Account Type</h3>
-                                <p className="text-white/70 font-medium mb-4 capitalize">{role}</p>
+                                <p className="text-white/70 font-medium mb-4 capitalize">{user.role}</p>
                                 <div className="h-px bg-white/10 my-6"></div>
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between text-sm">

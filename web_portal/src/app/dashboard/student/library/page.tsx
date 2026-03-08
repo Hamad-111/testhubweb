@@ -59,7 +59,12 @@ export default function StudentLibraryPage() {
             <main className="flex-1 md:ml-64 p-4 md:p-8">
                 {/* Mobile Header */}
                 <div className="md:hidden flex items-center justify-between mb-6 bg-white p-4 rounded-xl shadow-sm">
-                    <button onClick={() => setSidebarOpen(true)} className="text-[#46178f]">
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        className="text-[#46178f]"
+                        title="Open Menu"
+                        aria-label="Open Menu"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
                     <span className="font-black text-xl text-[#46178f]">My Library</span>
