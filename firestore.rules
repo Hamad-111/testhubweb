@@ -54,10 +54,11 @@ service cloud.firestore {
 
     // Subscription Requests collection
     match /subscription_requests/{requestId} {
-      // Users can see their own requests
+      // Users can see their own requests (or admin can see all)
       allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
-      // Users can create requests
-      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      // Allow creation if they are authenticated OR if it's a guest submission
+      allow create: if (isAuthenticated() && request.resource.data.userId == request.auth.uid) || 
+                       (request.resource.data.userId == 'guest' && request.resource.data.userEmail != null);
       // Only admins can update (approve/reject)
       allow update: if isAdmin();
     }

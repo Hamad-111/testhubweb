@@ -96,25 +96,25 @@ export default function Login() {
                 setSelectedRole(type);
                 setView('login');
             }}
-            className={`cursor-pointer p-8 rounded-[2.5rem] bg-white border-2 border-transparent hover:border-${color}-400 shadow-xl transition-all duration-300 flex flex-col items-center text-center group relative overflow-hidden`}
+            className={`cursor-pointer p-8 rounded-[2.5rem] bg-white/5 border border-white/10 hover:bg-white/10 hover:border-${color}-400/50 backdrop-blur-sm shadow-xl transition-all duration-300 flex flex-col items-center text-center group relative overflow-hidden`}
         >
             <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-${color}-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity`}></div>
-            <div className={`w-20 h-20 rounded-3xl bg-${color}-50 text-${color}-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
+            <div className={`w-20 h-20 rounded-3xl bg-${color}-500/10 text-${color}-400 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-${color}-500/20 transition-all duration-500`}>
                 <Icon size={40} strokeWidth={2.5} />
             </div>
-            <h3 className="text-2xl font-black text-gray-900 mb-3">{title}</h3>
-            <p className="text-gray-500 font-medium leading-relaxed">{desc}</p>
-            <div className={`mt-8 w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-${color}-600 group-hover:text-white transition-all duration-300`}>
+            <h3 className="text-2xl font-black text-white mb-3">{title}</h3>
+            <p className="text-gray-400 font-medium leading-relaxed">{desc}</p>
+            <div className={`mt-8 w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:bg-${color}-500 group-hover:text-white transition-all duration-300`}>
                 <ArrowRight size={20} />
             </div>
         </motion.div>
     );
 
     return (
-        <div className="min-h-screen bg-[#f8f9ff] flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen bg-[#0B0F19] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#0B0F19] to-[#0B0F19] flex items-center justify-center p-4 relative overflow-hidden text-white font-sans">
             {/* Ambient Background */}
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-200/40 rounded-full blur-[120px] pointer-events-none"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-200/40 rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute top-[20%] left-[10%] w-[30%] h-[30%] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-[20%] right-[10%] w-[30%] h-[30%] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
             <AnimatePresence mode="wait">
                 {view === 'role-selection' ? (
@@ -133,8 +133,8 @@ export default function Login() {
                             >
                                 <GraduationCap size={32} />
                             </motion.div>
-                            <h1 className="text-5xl font-black text-gray-900 mb-4 tracking-tight">Log in to Test Hub</h1>
-                            <p className="text-xl text-gray-500 font-medium tracking-tight">Select your role to continue your journey</p>
+                            <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Log in to Test Hub</h1>
+                            <p className="text-xl text-gray-400 font-medium tracking-tight">Select your role to continue your journey</p>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-8">
@@ -155,7 +155,7 @@ export default function Login() {
                         </div>
 
                         <div className="mt-12 text-center">
-                            <Link href="/join" className="inline-flex items-center gap-2 text-primary font-bold hover:underline group">
+                            <Link href="/join" className="inline-flex items-center gap-2 text-blue-400 font-bold hover:text-blue-300 hover:underline transition-colors group">
                                 <Sparkles size={18} className="group-hover:rotate-12 transition-transform" />
                                 Just want to join a game? Click here
                             </Link>
@@ -167,11 +167,11 @@ export default function Login() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className="w-full max-w-md bg-white rounded-[3rem] p-10 shadow-2xl relative z-10 border border-gray-100"
+                        className="w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-xl rounded-[3rem] p-10 shadow-2xl relative z-10"
                     >
                         <button
                             onClick={() => setView('role-selection')}
-                            className="absolute top-8 left-8 p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-900"
+                            className="absolute top-8 left-8 p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
                             title="Back to role selection"
                             aria-label="Back to role selection"
                         >
@@ -179,41 +179,41 @@ export default function Login() {
                         </button>
 
                         <div className="text-center mb-10 pt-4">
-                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${selectedRole === 'student' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>
+                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${selectedRole === 'student' ? 'bg-blue-500/10 text-blue-400' : 'bg-purple-500/10 text-purple-400'}`}>
                                 {selectedRole === 'student' ? <User size={32} /> : <GraduationCap size={32} />}
                             </div>
-                            <h2 className="text-3xl font-black text-gray-900 mb-2">
+                            <h2 className="text-3xl font-black text-white mb-2">
                                 {selectedRole === 'student' ? 'Student Login' : 'Teacher Login'}
                             </h2>
-                            <p className="text-gray-500 font-medium">Please enter your details</p>
+                            <p className="text-gray-400 font-medium">Please enter your details</p>
                         </div>
 
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-gray-700 ml-1">Email</label>
+                                <label className="text-sm font-bold text-gray-300 ml-1">Email</label>
                                 <div className="relative">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={20} />
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                                     <input
                                         type="email"
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border-2 border-gray-100 rounded-2xl focus:border-primary focus:bg-white outline-none transition-all font-medium"
+                                        className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:border-blue-500 focus:bg-white/10 outline-none transition-all font-medium"
                                         placeholder="your@email.com"
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-gray-700 ml-1">Password</label>
+                                <label className="text-sm font-bold text-gray-300 ml-1">Password</label>
                                 <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={20} />
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                                     <input
                                         type="password"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border-2 border-gray-100 rounded-2xl focus:border-primary focus:bg-white outline-none transition-all font-medium"
+                                        className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:border-blue-500 focus:bg-white/10 outline-none transition-all font-medium"
                                         placeholder="••••••••"
                                     />
                                 </div>
@@ -222,30 +222,30 @@ export default function Login() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`w-full py-4 rounded-2xl font-black text-lg text-white shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2 ${selectedRole === 'student' ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-200' : 'bg-purple-600 hover:bg-purple-700 shadow-purple-200'}`}
+                                className={`w-full py-4 rounded-2xl font-black text-lg text-white shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2 ${selectedRole === 'student' ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-900/50' : 'bg-purple-600 hover:bg-purple-700 shadow-purple-900/50'}`}
                             >
                                 {loading ? "Signing in..." : "Continue"}
                                 {!loading && <ArrowRight size={20} />}
                             </button>
                         </form>
 
-                        <div className="my-8 flex items-center gap-4 text-gray-300">
-                            <div className="h-[1px] flex-1 bg-current"></div>
-                            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">or</span>
-                            <div className="h-[1px] flex-1 bg-current"></div>
+                        <div className="my-8 flex items-center gap-4 text-gray-600">
+                            <div className="h-[1px] flex-1 bg-white/10"></div>
+                            <span className="text-xs font-bold uppercase tracking-widest text-gray-500">or</span>
+                            <div className="h-[1px] flex-1 bg-white/10"></div>
                         </div>
 
                         <button
                             onClick={handleGoogleSignIn}
                             disabled={loading}
-                            className="w-full py-4 border-2 border-gray-100 rounded-2xl flex items-center justify-center gap-3 font-bold text-gray-700 hover:bg-gray-50 transition-all mb-8"
+                            className="w-full py-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center gap-3 font-bold text-white hover:bg-white/10 transition-all mb-8"
                         >
                             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
                             Continue with Google
                         </button>
 
-                        <p className="text-center text-gray-500 font-bold text-sm">
-                            Don't have an account? <Link href="/signup" className="text-primary hover:underline">Sign up</Link>
+                        <p className="text-center text-gray-400 font-bold text-sm">
+                            Don't have an account? <Link href="/signup" className="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Sign up</Link>
                         </p>
                     </motion.div>
                 )}

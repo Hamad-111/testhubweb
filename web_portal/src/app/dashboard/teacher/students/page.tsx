@@ -52,95 +52,113 @@ export default function TeacherStudentManagement() {
     if (!user) return <div className="p-8">Access Denied</div>;
 
     return (
-        <div className="flex min-h-screen bg-[#f2f2f2]">
+        <div className="flex min-h-screen bg-[#f8f9fa] font-sans">
             <Sidebar role="instructor" userName={user.displayName || "Teacher"} />
 
-            <main className="flex-1 ml-64 p-8">
-                <div className="max-w-6xl mx-auto">
-                    <Link href="/dashboard/teacher" className="flex items-center text-gray-500 mb-6 hover:text-[#46178f] font-bold transition-colors">
-                        <ArrowLeft size={20} className="mr-2" /> Back to Dashboard
+            <main className="flex-1 md:ml-72 p-6 md:p-12 w-full animate-fade-in">
+                <div className="max-w-7xl mx-auto">
+                    {/* Breadcrumbs & Navigation */}
+                    <Link href="/dashboard/teacher" className="inline-flex items-center text-[10px] font-black tracking-[0.2em] text-slate-400 mb-8 hover:text-primary transition-colors uppercase group">
+                        <ArrowLeft size={14} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+                        Back to Command Center
                     </Link>
 
-                    <div className="flex justify-between items-center mb-8">
+                    {/* Header Section */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 animate-slide-up">
                         <div>
-                            <h1 className="text-3xl font-black text-[#333]">Student Directory</h1>
-                            <p className="text-gray-500 mt-1">View all students registered on the platform.</p>
+                            <h1 className="text-4xl font-black text-slate-900 tracking-tighter">Student Directory</h1>
+                            <p className="text-slate-500 font-medium mt-1">Manage enrollments and monitor academic performance.</p>
+                        </div>
+
+                        {/* Modern Search Bar */}
+                        <div className="relative w-full md:w-96 group">
+                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search by name or email..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/30 transition-all font-bold text-sm shadow-premium group-hover:shadow-lg"
+                                title="Search students"
+                            />
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-                            <div className="relative max-w-md">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                <input
-                                    type="text"
-                                    placeholder="Search by name or email..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#46178f]/20 focus:border-[#46178f] transition-all font-medium text-sm shadow-sm"
-                                    title="Search students"
-                                />
-                            </div>
-                        </div>
-
+                    {/* Main Table - Modern Glass Aesthetic */}
+                    <div className="bg-white rounded-[2.5rem] shadow-premium border border-white overflow-hidden animate-slide-up [animation-delay:200ms]">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="bg-gray-50 border-b border-gray-200">
-                                        <th className="px-6 py-4 font-black text-[#333] text-xs uppercase tracking-wider">Student</th>
-                                        <th className="px-6 py-4 font-black text-[#333] text-xs uppercase tracking-wider">Contact Info</th>
-                                        <th className="px-6 py-4 font-black text-[#333] text-xs uppercase tracking-wider">Performance</th>
-                                        <th className="px-6 py-4 font-black text-[#333] text-xs uppercase tracking-wider">Joined</th>
+                            <table className="w-full text-left">
+                                <thead className="bg-slate-50/50 border-b border-slate-100">
+                                    <tr>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Learner Profile</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Communication</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Metrics</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Enrollment</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-slate-50">
                                     {filteredStudents.length === 0 ? (
                                         <tr>
-                                            <td colSpan={4} className="px-6 py-12 text-center">
-                                                <div className="flex flex-col items-center opacity-40">
-                                                    <UserIcon size={48} className="mb-2" />
-                                                    <p className="font-bold text-gray-500">No students found</p>
+                                            <td colSpan={4} className="px-8 py-20 text-center">
+                                                <div className="flex flex-col items-center group">
+                                                    <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-3xl mb-4 grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all transform group-hover:scale-110 duration-700 animate-float">👤</div>
+                                                    <h3 className="font-black text-xl text-slate-800 tracking-tight mb-1">Awaiting students</h3>
+                                                    <p className="text-slate-400 font-bold text-sm tracking-tight italic">Share your quiz code to start populating your directory.</p>
                                                 </div>
                                             </td>
                                         </tr>
                                     ) : (
                                         filteredStudents.map((student) => {
                                             const name = student.displayName || student.name || "Anonymous";
-                                            const joinDate = student.createdAt?.toDate ? student.createdAt.toDate().toLocaleDateString() : 'N/A';
+                                            const joinDate = student.createdAt?.toDate ? student.createdAt.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
 
                                             return (
-                                                <tr key={student.id} className="hover:bg-[#46178f]/5 transition-colors group">
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="w-12 h-12 rounded-xl bg-purple-100 text-[#46178f] flex items-center justify-center font-black text-lg border-2 border-purple-200 group-hover:scale-110 transition-transform shadow-sm">
+                                                <tr key={student.id} className="hover:bg-slate-50/80 transition-all duration-300 group">
+                                                    <td className="px-8 py-6">
+                                                        <div className="flex items-center gap-5">
+                                                            <div className="w-14 h-14 rounded-2xl bg-white shadow-inner text-primary flex items-center justify-center font-black text-lg border border-slate-100 group-hover:rotate-6 group-hover:scale-110 transition-all duration-500">
                                                                 {name.charAt(0).toUpperCase()}
                                                             </div>
                                                             <div>
-                                                                <span className="font-bold text-[#333] block text-base">{name}</span>
-                                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID: {student.id.substring(0, 8)}</span>
+                                                                <span className="font-black text-slate-900 block text-lg tracking-tight group-hover:text-primary transition-colors">{name}</span>
+                                                                <div className="flex items-center gap-2 mt-0.5">
+                                                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">ID: {student.id.substring(0, 8)}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex items-center gap-2 text-gray-600 font-bold text-sm">
-                                                            <Mail size={16} className="text-gray-400" />
-                                                            {student.email || 'No email provided'}
+                                                    <td className="px-8 py-6">
+                                                        <div className="flex items-center gap-3 text-slate-500 font-bold text-sm group-hover:translate-x-1 transition-transform">
+                                                            <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-transparent group-hover:border-primary/20 group-hover:text-primary transition-all">
+                                                                <Mail size={14} />
+                                                            </div>
+                                                            {student.email || 'No contact sync'}
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex items-center gap-6">
-                                                            <div className="flex items-center gap-1.5" title="Quizzes Taken">
-                                                                <BookOpen size={16} className="text-blue-500" />
-                                                                <span className="text-sm font-black text-gray-700">{student.quizzesTaken || 0}</span>
+                                                    <td className="px-8 py-6">
+                                                        <div className="flex items-center gap-8">
+                                                            <div className="flex flex-col gap-1" title="Quizzes Taken">
+                                                                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Quizzes</span>
+                                                                <div className="flex items-center gap-2">
+                                                                    <BookOpen size={14} className="text-blue-500" />
+                                                                    <span className="text-sm font-black text-slate-700">{student.quizzesTaken || 0}</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="flex items-center gap-1.5" title="Total Score">
-                                                                <Award size={16} className="text-[#ffa602]" />
-                                                                <span className="text-sm font-black text-gray-700">{student.totalScore || 0}</span>
+                                                            <div className="flex flex-col gap-1" title="Total Score">
+                                                                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Score</span>
+                                                                <div className="flex items-center gap-2">
+                                                                    <Award size={14} className="text-[#ffa602]" />
+                                                                    <span className="text-sm font-black text-slate-700">{student.totalScore || 0}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4">
-                                                        <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{joinDate}</span>
+                                                    <td className="px-8 py-6">
+                                                        <div className="inline-flex flex-col items-start px-4 py-2 bg-slate-50 rounded-xl border border-transparent group-hover:border-slate-200 transition-all">
+                                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] mb-0.5">Joined</span>
+                                                            <span className="text-xs font-black text-slate-700">{joinDate}</span>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             );
@@ -151,8 +169,10 @@ export default function TeacherStudentManagement() {
                         </div>
                     </div>
 
-                    <div className="mt-6 text-center text-gray-400 text-xs font-bold uppercase tracking-widest">
-                        Total {filteredStudents.length} {filteredStudents.length === 1 ? 'Student' : 'Students'}
+                    <div className="mt-12 text-center animate-fade-in [animation-delay:800ms]">
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] bg-white px-6 py-2 rounded-full border border-slate-50 shadow-sm">
+                            Aggregate Sync: {filteredStudents.length} {filteredStudents.length === 1 ? 'Profile' : 'Profiles'}
+                        </span>
                     </div>
                 </div>
             </main>

@@ -2,13 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .premium-gradient {
+    @apply bg-gradient-to-r from-[#7c4dff] to-[#3b82f6];
+  }
+
+  .shadow-premium {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  }
+
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl;
+  }
+
+  .glass-card {
+    @apply bg-slate-900/50 backdrop-blur-md border border-slate-700/50 shadow-2xl hover:border-primary/50 transition-colors;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-light via-purple-300 to-secondary-light;
+  }
+}
+
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 15, 23, 42;
+  --background-end-rgb: 0, 0, 0;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: white;
+  background: rgb(var(--background-start-rgb));
 }

@@ -138,7 +138,7 @@ export default function AdminQuizManagement() {
     if (!user || user.role !== "admin") return <div className="p-8 font-bold text-red-500">Access Denied</div>;
 
     return (
-        <div className="flex min-h-screen bg-[#f8f9fa]">
+        <div className="flex min-h-screen bg-[#f8f9fa] font-sans">
             <Sidebar
                 role="admin"
                 userName={user.displayName || "Admin"}
@@ -146,148 +146,159 @@ export default function AdminQuizManagement() {
                 onClose={() => setSidebarOpen(false)}
             />
 
-            <main className="flex-1 md:ml-64 p-4 md:p-8">
+            <main className="flex-1 md:ml-72 p-6 md:p-12 w-full animate-fade-in">
                 {/* Mobile Header */}
-                <div className="md:hidden flex items-center justify-between mb-6 bg-white p-4 rounded-xl shadow-sm">
+                <div className="md:hidden flex items-center justify-between mb-8 glass-card p-4 rounded-3xl border-white/50">
                     <button
                         onClick={() => setSidebarOpen(true)}
-                        className="text-[#46178f]"
+                        className="p-2 text-primary hover:bg-primary/5 rounded-xl transition-colors"
                         title="Open Menu"
-                        aria-label="Open Menu"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
-                    <span className="font-black text-xl text-[#46178f]">Quiz Management</span>
-                    <div className="w-8 h-8 rounded bg-[#1368ce] flex items-center justify-center text-white font-bold text-sm">
+                    <span className="font-black text-xl text-slate-900 tracking-tighter">Quiz Vault</span>
+                    <div className="w-10 h-10 rounded-xl premium-gradient flex items-center justify-center text-white font-black text-sm shadow-lg">
                         {user.displayName?.charAt(0).toUpperCase() || "A"}
                     </div>
                 </div>
 
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    {/* Header Section */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 animate-slide-up">
                         <div>
-                            <h1 className="text-3xl font-black text-[#1F2937]">Quiz Repository</h1>
-                            <p className="text-gray-500 mt-1">Monitor and control all quizzes across the platform.</p>
+                            <h1 className="text-4xl font-black text-slate-900 tracking-tighter">Repository Alpha</h1>
+                            <p className="text-slate-500 font-medium mt-1">Global oversight and operational control of the instructional asset layer.</p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-4">
                             <button
                                 onClick={handleClearAll}
-                                className="bg-red-50 px-4 py-2 rounded-xl border border-red-100 text-red-600 font-bold hover:bg-red-100 transition-all flex items-center gap-2 text-sm shadow-sm"
-                                title="Clear All Quizzes"
+                                className="px-6 py-3 bg-red-50 text-red-600 border border-red-100 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-100 transition-all flex items-center gap-2 shadow-sm active:scale-95"
                             >
-                                <Trash2 size={18} />
-                                Clear All Quizzes
+                                <Trash2 size={16} strokeWidth={3} />
+                                Purge Ecosystem
                             </button>
                             <button
                                 onClick={fetchAllQuizzes}
-                                className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 transition-all text-[#46178f]"
-                                title="Refresh Data"
+                                className="p-3 bg-white border border-slate-200 rounded-2xl text-primary shadow-sm hover:shadow-md transition-all active:scale-95"
+                                title="Sync Repository"
                             >
-                                <RefreshCcw size={20} />
+                                <RefreshCcw size={20} className="animate-spin-slow" />
                             </button>
                         </div>
                     </div>
 
-                    {/* Search Bar */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-8">
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    {/* Search Stratagem */}
+                    <div className="bg-white rounded-[2.5rem] shadow-premium border border-white p-6 mb-12 animate-slide-up [animation-delay:200ms]">
+                        <div className="relative group">
+                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={24} strokeWidth={3} />
                             <input
                                 type="text"
-                                placeholder="Search by quiz title or instructor name..."
-                                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#46178f] transition-all font-medium text-gray-700"
+                                placeholder="Query by curriculum title or instructor entity..."
+                                className="w-full pl-16 pr-8 py-5 bg-slate-50 border border-slate-100 rounded-[1.8rem] focus:outline-none focus:ring-4 focus:ring-primary/10 focus:bg-white transition-all font-bold text-slate-700 placeholder:text-slate-300 text-lg tracking-tight"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    {/* Repository Terminal */}
+                    <div className="bg-white rounded-[2.5rem] shadow-premium border border-white overflow-hidden animate-slide-up [animation-delay:400ms]">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-gray-50 border-b border-gray-100">
+                            <table className="w-full text-left border-collapse">
+                                <thead className="bg-slate-50/50 border-b border-slate-100">
                                     <tr>
-                                        <th className="px-6 py-4 font-bold text-gray-700 text-sm">Quiz Details</th>
-                                        <th className="px-6 py-4 font-bold text-gray-700 text-sm">Created At</th>
-                                        <th className="px-6 py-4 font-bold text-gray-700 text-sm">Instructor</th>
-                                        <th className="px-6 py-4 font-bold text-gray-700 text-sm">Status</th>
-                                        <th className="px-6 py-4 font-bold text-gray-700 text-sm">Stats</th>
-                                        <th className="px-6 py-4 font-bold text-gray-700 text-sm text-right">Actions</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Curriculum Asset</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Deployment</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Source Entity</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Complexity</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Ops</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-slate-50">
                                     {filteredQuizzes.length === 0 ? (
                                         <tr>
-                                            <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <span className="text-4xl italic opacity-50">📝</span>
-                                                    <p className="font-bold">No quizzes found matching your search.</p>
+                                            <td colSpan={6} className="px-8 py-24 text-center">
+                                                <div className="flex flex-col items-center gap-6 opacity-40">
+                                                    <span className="text-6xl animate-bounce-slow">📝</span>
+                                                    <p className="font-black text-slate-500 uppercase tracking-[0.3em] text-sm">No curriculum matches detected</p>
                                                 </div>
                                             </td>
                                         </tr>
                                     ) : (
-                                        filteredQuizzes.map((quiz) => (
-                                            <tr key={quiz.id} className="hover:bg-gray-50/50 transition-colors">
-                                                <td className="px-6 py-4">
-                                                    <div>
-                                                        <span className="font-black text-gray-900 block group-hover:text-[#46178f] transition-colors">{quiz.title}</span>
-                                                        <span className="text-xs text-gray-400 font-mono mt-1 opacity-60">ID: {quiz.id.substring(0, 8)}...</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4">
+                                        filteredQuizzes.map((quiz, index) => (
+                                            <tr key={quiz.id} className="hover:bg-slate-50/80 transition-all duration-300 group">
+                                                <td className="px-8 py-6">
                                                     <div className="flex flex-col">
-                                                        <span className="text-sm font-bold text-gray-700">{formatDate(quiz.createdAt)}</span>
-                                                        <span className="text-[10px] text-gray-400 font-medium">PKST Time</span>
+                                                        <span className="font-black text-slate-900 text-lg tracking-tighter group-hover:text-primary transition-colors leading-tight">{quiz.title}</span>
+                                                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest mt-1">UID: {quiz.id.substring(0, 12)}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-[10px] font-bold">
-                                                            {quiz.instructorName?.charAt(0) || "I"}
+                                                <td className="px-8 py-6">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-black text-slate-600 tracking-tight">{formatDate(quiz.createdAt)}</span>
+                                                        <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none">Standard PKST</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-6">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-[10px] font-black shadow-sm group-hover:premium-gradient group-hover:text-white transition-all">
+                                                            {quiz.instructorName?.charAt(0).toUpperCase() || "I"}
                                                         </div>
-                                                        <span className="text-sm font-bold text-gray-600">{quiz.instructorName || "Unknown"}</span>
+                                                        <span className="text-sm font-black text-slate-700 tracking-tight">{quiz.instructorName || "Entity Unknown"}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${quiz.isPublished ? "bg-green-100 text-green-700 border border-green-200" : "bg-gray-100 text-gray-500 border border-gray-200"}`}>
-                                                        {quiz.isPublished ? "🟢 Live" : "⚪ Draft"}
+                                                <td className="px-8 py-6">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`w-2 h-2 rounded-full animate-pulse ${quiz.isPublished ? "bg-green-500" : "bg-slate-300"}`} />
+                                                        <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${quiz.isPublished
+                                                            ? "bg-green-50/50 text-green-600 border-green-100"
+                                                            : "bg-slate-50/50 text-slate-400 border-slate-100"
+                                                            }`}>
+                                                            {quiz.isPublished ? "Live Node" : "Draft Cache"}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-6">
+                                                    <span className="text-sm font-black text-slate-500 tabular-nums tracking-tighter">
+                                                        {quiz.questions?.length || 0} Modules
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 text-xs font-bold text-gray-500">
-                                                    {quiz.questions?.length || 0} Questions
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex justify-end gap-2">
+                                                <td className="px-8 py-6 text-right">
+                                                    <div className="flex justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                                                         <button
                                                             onClick={() => handleToggleStatus(quiz.id, quiz.isPublished)}
-                                                            className={`p-2 rounded-lg transition-all ${quiz.isPublished ? "bg-orange-50 text-orange-600 hover:bg-orange-100" : "bg-green-50 text-green-600 hover:bg-green-100"}`}
-                                                            title={quiz.isPublished ? "Pause Quiz" : "Resume Quiz"}
+                                                            className={`p-3 rounded-2xl transition-all shadow-sm active:scale-90 ${quiz.isPublished
+                                                                ? "bg-amber-50 text-amber-600 hover:bg-amber-100"
+                                                                : "bg-green-50 text-green-600 hover:bg-green-100"
+                                                                }`}
+                                                            title={quiz.isPublished ? "Kill Switch" : "Activate Node"}
                                                         >
-                                                            {quiz.isPublished ? <Pause size={18} /> : <Play size={18} />}
+                                                            {quiz.isPublished ? <Pause size={18} strokeWidth={3} /> : <Play size={18} strokeWidth={3} />}
                                                         </button>
                                                         {quiz.isPublished && (
                                                             <button
                                                                 onClick={() => handleTerminate(quiz.id)}
-                                                                className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all"
-                                                                title="Terminate Session"
+                                                                className="p-3 bg-red-50 text-red-600 rounded-2xl hover:bg-red-100 transition-all shadow-sm active:scale-90"
+                                                                title="Force Terminate"
                                                             >
-                                                                <StopCircle size={18} />
+                                                                <StopCircle size={18} strokeWidth={3} />
                                                             </button>
                                                         )}
                                                         <button
                                                             onClick={() => handleDelete(quiz.id)}
-                                                            className="p-2 bg-gray-50 text-gray-400 rounded-lg hover:bg-red-50 hover:text-red-700 transition-all"
-                                                            title="Delete Permanently"
+                                                            className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-red-50 hover:text-red-700 transition-all shadow-sm active:scale-90"
+                                                            title="Purge Object"
                                                         >
-                                                            <Trash2 size={18} />
+                                                            <Trash2 size={18} strokeWidth={3} />
                                                         </button>
                                                         <Link
                                                             href={`/play/${quiz.id}`}
                                                             target="_blank"
-                                                            className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-all"
-                                                            title="View Live Page"
+                                                            className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-100 transition-all shadow-sm active:scale-90"
+                                                            title="Inspect Deployment"
                                                         >
-                                                            <ExternalLink size={18} />
+                                                            <ExternalLink size={18} strokeWidth={3} />
                                                         </Link>
                                                     </div>
                                                 </td>
@@ -298,6 +309,13 @@ export default function AdminQuizManagement() {
                             </table>
                         </div>
                     </div>
+                </div>
+
+                {/* Footer Insight */}
+                <div className="mt-12 text-center animate-fade-in [animation-delay:800ms]">
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] bg-white px-8 py-3 rounded-2xl border border-slate-50 shadow-sm">
+                        Curriculum Integrity Layer v4.1.0 • {filteredQuizzes.length} Active Objects
+                    </span>
                 </div>
             </main>
         </div>

@@ -98,89 +98,126 @@ export default function AdminSubscriptions() {
     if (user?.role !== 'admin') return <div className="p-8">Access Denied: Admins Only</div>;
 
     return (
-        <div className="flex min-h-screen bg-[#f2f2f2]">
+        <div className="flex min-h-screen bg-[#f8f9fa] font-sans">
             <Sidebar role="admin" userName={user.displayName || "Admin"} />
 
-            <main className="flex-1 ml-64 p-8">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-black text-[#333]">Subscription Requests</h1>
+            <main className="flex-1 md:ml-72 p-6 md:p-12 w-full animate-fade-in">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 animate-slide-up">
+                    <div>
+                        <h1 className="text-4xl font-black text-slate-900 tracking-tighter">Subscription Vault</h1>
+                        <p className="text-slate-500 font-medium mt-1">Review and verify premium membership requests across the ecosystem.</p>
+                    </div>
                     <button
                         onClick={fetchRequests}
-                        className="px-4 py-2 bg-white border rounded hover:bg-gray-50 text-sm font-bold"
+                        className="px-6 py-3 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 text-sm font-black text-primary shadow-sm hover:shadow-md transition-all flex items-center gap-2 active:scale-95"
                     >
-                        Refresh 🔄
+                        Sync Data <span className="animate-spin-slow">🔄</span>
                     </button>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                {/* Table Container - Glass Effect */}
+                <div className="bg-white rounded-[2.5rem] shadow-premium border border-white overflow-hidden animate-slide-up [animation-delay:200ms]">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="bg-gray-50 border-b border-gray-100">
+                        <table className="w-full text-left border-collapse">
+                            <thead className="bg-slate-50/50 border-b border-slate-100">
                                 <tr>
-                                    <th className="p-4 font-bold text-gray-600">User</th>
-                                    <th className="p-4 font-bold text-gray-600">Plan</th>
-                                    <th className="p-4 font-bold text-gray-600">Amount</th>
-                                    <th className="p-4 font-bold text-gray-600">Transaction ID</th>
-                                    <th className="p-4 font-bold text-gray-600">Date</th>
-                                    <th className="p-4 font-bold text-gray-600">Status</th>
-                                    <th className="p-4 font-bold text-gray-600">Actions</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Member Entity</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Plan tier</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Financials</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Transaction UUID</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Timestamp</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Verification</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Operations</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-slate-50">
                                 {loadingRequests ? (
-                                    <tr><td colSpan={7} className="p-8 text-center text-gray-500">Loading requests...</td></tr>
+                                    <tr>
+                                        <td colSpan={7} className="p-24 text-center">
+                                            <div className="flex flex-col items-center gap-4">
+                                                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                                                <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">Querying database...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 ) : requests.length === 0 ? (
-                                    <tr><td colSpan={7} className="p-8 text-center text-gray-500">No subscription requests found.</td></tr>
+                                    <tr>
+                                        <td colSpan={7} className="p-24 text-center">
+                                            <div className="flex flex-col items-center gap-4 opacity-40">
+                                                <span className="text-6xl">📥</span>
+                                                <p className="text-slate-500 font-black text-sm uppercase tracking-widest">No pending verifications found</p>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 ) : (
-                                    requests.map((req) => (
-                                        <tr key={req.id} className="hover:bg-gray-50">
-                                            <td className="p-4">
-                                                <div className="font-bold text-[#333]">{req.userName}</div>
-                                                <div className="text-xs text-gray-500">{req.userEmail}</div>
+                                    requests.map((req, index) => (
+                                        <tr key={req.id} className="hover:bg-slate-50/80 transition-all duration-300 group">
+                                            <td className="px-8 py-6">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-xl premium-gradient text-white flex items-center justify-center font-black text-sm shadow-lg group-hover:scale-110 transition-transform">
+                                                        {req.userName?.charAt(0).toUpperCase() || "U"}
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="font-black text-slate-900 tracking-tight group-hover:text-primary transition-colors">{req.userName}</span>
+                                                        <span className="text-[10px] font-bold text-slate-400 leading-none">{req.userEmail}</span>
+                                                    </div>
+                                                </div>
                                             </td>
-                                            <td className="p-4">
-                                                <span className="bg-purple-100 text-[#46178f] text-xs font-bold px-2 py-1 rounded">
-                                                    {req.planId === 'premium_yearly' ? 'Yearly' : 'Monthly'}
+                                            <td className="px-8 py-6">
+                                                <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${req.planId?.includes('yearly')
+                                                    ? "bg-purple-50 text-purple-600 border-purple-100"
+                                                    : "bg-blue-50 text-blue-600 border-blue-100"
+                                                    }`}>
+                                                    {req.planId?.includes('yearly') ? 'Yearly Premium' : 'Monthly Pro'}
                                                 </span>
                                             </td>
-                                            <td className="p-4 font-mono font-bold">
-                                                Rs. {req.amount?.toLocaleString()}
+                                            <td className="px-8 py-6">
+                                                <span className="text-sm font-black text-slate-800 tracking-tighter">Rs. {req.amount?.toLocaleString()}</span>
                                             </td>
-                                            <td className="p-4 font-mono text-blue-600">
-                                                {req.transactionId}
+                                            <td className="px-8 py-6">
+                                                <code className="text-[10px] font-black text-slate-400 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 uppercase tracking-tighter">
+                                                    {req.transactionId || 'SYS-AUTO-000'}
+                                                </code>
                                             </td>
-                                            <td className="p-4 text-sm text-gray-500">
-                                                {req.createdAt?.seconds ? new Date(req.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                                            <td className="px-8 py-6">
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-black text-slate-500 tracking-tight">
+                                                        {req.createdAt?.seconds ? new Date(req.createdAt.seconds * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                                                    </span>
+                                                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Entry Date</span>
+                                                </div>
                                             </td>
-                                            <td className="p-4">
-                                                {req.status === 'pending' && (
-                                                    <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded">Pending</span>
-                                                )}
-                                                {req.status === 'approved' && (
-                                                    <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">Approved</span>
-                                                )}
-                                                {req.status === 'rejected' && (
-                                                    <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded">Rejected</span>
-                                                )}
+                                            <td className="px-8 py-6">
+                                                <div className="flex items-center gap-2">
+                                                    <div className={`w-2 h-2 rounded-full animate-pulse ${req.status === 'approved' ? 'bg-green-500' : req.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                                                        }`} />
+                                                    <span className={`text-[10px] font-black uppercase tracking-widest ${req.status === 'approved' ? 'text-green-600' : req.status === 'pending' ? 'text-yellow-600' : 'text-red-600'
+                                                        }`}>
+                                                        {req.status}
+                                                    </span>
+                                                </div>
                                             </td>
-                                            <td className="p-4">
-                                                {req.status === 'pending' && (
-                                                    <div className="flex gap-2">
+                                            <td className="px-8 py-6 text-right">
+                                                {req.status === 'pending' ? (
+                                                    <div className="flex justify-end gap-3 translate-x-2 opacity-80 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
                                                         <button
                                                             onClick={() => handleApprove(req)}
                                                             disabled={processingId === req.id}
-                                                            className="px-3 py-1 bg-green-600 text-white rounded text-xs font-bold hover:bg-green-700 disabled:opacity-50"
+                                                            className="px-5 py-2.5 bg-green-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-700 shadow-md hover:shadow-green-200 transition-all active:scale-95 disabled:opacity-50"
                                                         >
-                                                            Approve
+                                                            {processingId === req.id ? '...' : 'Verify'}
                                                         </button>
                                                         <button
                                                             onClick={() => handleReject(req.id)}
                                                             disabled={processingId === req.id}
-                                                            className="px-3 py-1 bg-red-100 text-red-600 rounded text-xs font-bold hover:bg-red-200 disabled:opacity-50"
+                                                            className="px-5 py-2.5 bg-red-50 text-red-600 border border-red-100 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition-all active:scale-95 disabled:opacity-50"
                                                         >
                                                             Reject
                                                         </button>
                                                     </div>
+                                                ) : (
+                                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Archived</span>
                                                 )}
                                             </td>
                                         </tr>
@@ -189,6 +226,13 @@ export default function AdminSubscriptions() {
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                {/* Footer Insight */}
+                <div className="mt-12 text-center animate-fade-in [animation-delay:800ms]">
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] bg-white px-8 py-3 rounded-2xl border border-slate-50 shadow-sm">
+                        Revenue Integrity Protocol v2.4.0 • {requests.length} Historical Records
+                    </span>
                 </div>
             </main>
         </div>

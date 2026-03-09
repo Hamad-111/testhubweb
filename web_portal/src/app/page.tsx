@@ -16,10 +16,13 @@ import {
   Check,
   ArrowRight,
   Menu,
-  X
+  X,
+  Rocket
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 // --- Components ---
 
@@ -30,44 +33,52 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <nav className={`fixed w-full z-50 top-0 left-0 transition-all duration-300 ${scrolled ? 'bg-primary/90 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-4'}`}>
+    <nav className={`fixed w-full z-50 top-0 left-0 transition-all duration-500 ${scrolled ? 'py-4' : 'py-6'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className={`flex justify-between items-center transition-all duration-500 rounded-full px-6 ${scrolled ? 'h-16 glass' : 'h-14 bg-transparent'}`}>
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 cursor-pointer group">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-lg group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-light to-secondary-light rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
               <GraduationCap size={24} fill="currentColor" />
             </div>
-            <span className="text-2xl font-bold text-white tracking-tight">
+            <span className="text-2xl font-black text-white tracking-tight">
               Test Hub
             </span>
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/#features" className="text-white/90 hover:text-white font-medium transition-colors">
+            <Link href="/#features" className="text-slate-300 hover:text-white text-sm font-semibold transition-colors">
               Features
             </Link>
-            <Link href="/#pricing" className="text-white/90 hover:text-white font-medium transition-colors">
+            <Link href="/#pricing" className="text-slate-300 hover:text-white text-sm font-semibold transition-colors">
               Pricing
             </Link>
-            <Link href="/join" className="text-white/90 hover:text-white font-medium transition-colors flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+            <Link href="/join" className="text-slate-300 hover:text-white text-sm font-semibold transition-colors flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
               Join Game
             </Link>
-            <Link
-              href="/login"
-              className="px-6 py-2.5 rounded-full bg-white text-primary font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-            >
-              Create Quiz
-            </Link>
+            <div className="flex items-center gap-4 ml-4">
+              <Link
+                href="/login"
+                className="text-white/80 hover:text-white text-sm font-bold transition-colors"
+              >
+                Log In
+              </Link>
+              <Link
+                href="/signup"
+                className="px-6 py-2 rounded-full bg-white text-slate-900 text-sm font-bold hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 transition-all duration-300"
+              >
+                Sign Up
+              </Link>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -84,21 +95,25 @@ const Navbar = () => {
 
 const Hero = () => {
   return (
-    <section className="relative pt-32 pb-32 overflow-hidden bg-gradient-to-br from-[#7C4DFF] via-[#651fff] to-[#2196F3]">
-      {/* Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-white/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-[120px] pointer-events-none" />
+    <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-slate-950">
+      {/* Background Orbs */}
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/40 rounded-full blur-[120px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-secondary/30 rounded-full blur-[150px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none mix-blend-overlay" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 w-full">
 
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-white mb-8"
+          className="inline-flex items-center gap-3 px-5 py-2 rounded-full glass border-white/20 text-white mb-10 mx-auto"
         >
-          <Sparkles size={16} className="text-yellow-300" />
-          <span className="text-sm font-medium">Powered by AI Technology</span>
+          <div className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
+          </div>
+          <span className="text-sm font-bold tracking-wide uppercase">Generative AI Engine 2.0</span>
         </motion.div>
 
         {/* Headline */}
@@ -106,18 +121,21 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tight"
+          className="text-6xl md:text-8xl font-black text-white mb-8 leading-[1.1] tracking-tight"
         >
-          Make Learning Awesome!
+          Make Learning <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-white to-primary-light">
+            Unforgettable
+          </span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-xl text-white/90 mb-12 max-w-2xl mx-auto font-medium"
+          className="text-xl md:text-2xl text-slate-300 mb-12 max-w-3xl mx-auto font-light leading-relaxed"
         >
-          Create engaging quizzes with AI in seconds and host live games that students absolutely love.
+          Create stunning quizzes with AI in seconds. Host live interactive games that students absolutely love, powered by real-time analytics.
         </motion.p>
 
         {/* Buttons */}
@@ -125,14 +143,17 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-24"
         >
-          <Link href="/login" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-primary font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
-            <Zap size={20} fill="currentColor" />
-            Create Quiz Free
+          <Link href="/signup" className="group relative w-full sm:w-auto">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary-light to-secondary-light rounded-2xl blur opacity-70 group-hover:opacity-100 transition duration-500 group-hover:duration-200"></div>
+            <div className="relative px-8 py-4 bg-slate-900 rounded-xl leading-none flex items-center justify-center gap-3 text-white font-bold text-lg hover:bg-slate-800 transition-colors">
+              <Zap size={20} className="text-accent" />
+              Start Creating Free
+            </div>
           </Link>
-          <Link href="/join" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white/10 border border-white/30 text-white font-bold text-lg backdrop-blur-sm hover:bg-white/20 transition-all flex items-center justify-center gap-2">
-            <Play size={20} fill="currentColor" />
+          <Link href="/join" className="w-full sm:w-auto px-8 py-4 rounded-xl glass text-white font-bold text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-3">
+            <Play size={20} />
             Join Game
           </Link>
         </motion.div>
@@ -142,70 +163,84 @@ const Hero = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+          className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto"
         >
           {[
-            { label: "Active Players Daily", value: "10K+", icon: <Check size={24} /> },
-            { label: "Quizzes Created", value: "5K+", icon: <BookOpen size={24} /> },
-            { label: "Games Played", value: "50K+", icon: <Users size={24} /> },
+            { label: "Active Daily Players", value: "10K+", icon: <Users size={20} className="text-blue-400" /> },
+            { label: "AI Quizzes Created", value: "50K+", icon: <Sparkles size={20} className="text-accent" /> },
+            { label: "Schools Worldwide", value: "500+", icon: <Globe size={20} className="text-green-400" /> },
           ].map((stat, i) => (
-            <div key={i} className="p-6 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md text-white">
-              <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
+            <div key={i} className="p-6 rounded-2xl glass-card flex items-center gap-6 text-left hover:-translate-y-1 transition-transform">
+              <div className="w-14 h-14 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0">
                 {stat.icon}
               </div>
-              <div className="text-4xl font-black mb-1">{stat.value}</div>
-              <div className="text-white/70 font-medium">{stat.label}</div>
+              <div>
+                <div className="text-3xl font-black text-white mb-1">{stat.value}</div>
+                <div className="text-slate-400 font-medium text-sm text-balance">{stat.label}</div>
+              </div>
             </div>
           ))}
         </motion.div>
       </div>
+
+      {/* Bottom fade out */}
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-slate-950 to-transparent z-10"></div>
     </section>
   );
 };
 
 const TrendingQuizzes = () => {
   const quizzes = [
-    { title: "World Geography Challenge", questions: 15, plays: 932, color: "bg-card-red", icon: <Globe size={32} className="text-white" /> },
-    { title: "Science Fundamentals", questions: 19, plays: 426, color: "bg-card-blue", icon: <Microscope size={32} className="text-white" /> },
-    { title: "Math Quick Quiz", questions: 10, plays: 851, color: "bg-card-yellow", icon: <Calculator size={32} className="text-white" /> },
-    { title: "History Trivia", questions: 12, plays: 734, color: "bg-card-green", icon: <BookOpen size={32} className="text-white" /> },
+    { title: "World Geography Challenge", questions: 15, plays: "9.3k", image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=400", hue: "from-blue-500/20" },
+    { title: "Science Fundamentals", questions: 19, plays: "4.2k", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=400", hue: "from-purple-500/20" },
+    { title: "Math Quick Quiz", questions: 10, plays: "8.5k", image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=400", hue: "from-green-500/20" },
+    { title: "History Trivia", questions: 12, plays: "7.3k", image: "https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&q=80&w=400", hue: "from-orange-500/20" },
   ];
 
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-32 bg-slate-950 relative z-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-black text-gray-900 mb-4">Trending Quizzes</h2>
-          <p className="text-gray-600 font-medium">Jump into these popular quiz games right now</p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">Trending Now</h2>
+            <p className="text-slate-400 font-medium text-lg">Jump into the most popular live games right now.</p>
+          </div>
+          <button className="hidden md:flex items-center gap-2 group text-white font-bold hover:text-accent transition-colors">
+            View Leaderboard <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {quizzes.map((quiz, i) => (
-            <div key={i} className="bg-white rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100">
-              <div className={`h-32 ${quiz.color} flex items-center justify-center`}>
-                <div className="transform group-hover:scale-110 transition-transform duration-300">
-                  {quiz.icon}
+            <div key={i} className="group relative rounded-3xl overflow-hidden glass-card p-2 cursor-pointer">
+              {/* Image Container */}
+              <div className="relative h-48 rounded-2xl overflow-hidden mb-4">
+                <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors z-10"></div>
+                {/* Fallback pattern if image is missing */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${quiz.hue} to-transparent z-0`}></div>
+                <img src={quiz.image} alt={quiz.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out" />
+
+                {/* Live Badge */}
+                <div className="absolute top-3 left-3 z-20 px-3 py-1 bg-black/50 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 text-xs font-bold text-white">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                  LIVE
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="font-bold text-gray-900 text-lg mb-4 leading-tight min-h-[3rem]">{quiz.title}</h3>
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
-                  <span className="flex items-center gap-1"><BookOpen size={14} /> {quiz.questions}</span>
-                  <span className="flex items-center gap-1"><Users size={14} /> {quiz.plays}</span>
+
+              <div className="px-4 pb-4">
+                <h3 className="font-bold text-white text-xl mb-3 leading-tight group-hover:text-accent transition-colors min-h-[3.5rem]">{quiz.title}</h3>
+                <div className="flex items-center justify-between text-sm text-slate-400">
+                  <span className="flex items-center gap-1.5 bg-slate-800/50 px-3 py-1.5 rounded-lg"><BookOpen size={14} className="text-primary-light" /> {quiz.questions} Qs</span>
+                  <span className="flex items-center gap-1.5 bg-slate-800/50 px-3 py-1.5 rounded-lg"><Users size={14} className="text-secondary-light" /> {quiz.plays}</span>
                 </div>
-                <Link href="/join" className={`block w-full text-center py-3 rounded-xl font-bold text-white transition-opacity hover:opacity-90 ${quiz.color.replace('bg-', 'bg-')}`}>
-                  Start Game
-                </Link>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <button className="px-8 py-3 rounded-full border-2 border-gray-200 font-bold text-gray-600 hover:border-primary hover:text-primary transition-colors">
-            Browse All Quizzes
-          </button>
-        </div>
+        <button className="md:hidden mt-8 w-full flex justify-center items-center gap-2 py-4 rounded-xl glass text-white font-bold">
+          View All <ArrowRight size={20} />
+        </button>
       </div>
     </section>
   );
@@ -213,25 +248,35 @@ const TrendingQuizzes = () => {
 
 const Features = () => {
   return (
-    <section id="features" className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-black text-gray-900 mb-4">Why Teachers Love Test Hub</h2>
-          <p className="text-gray-600 font-medium">Everything you need to create engaging learning experiences</p>
+    <section id="features" className="py-32 bg-slate-900 border-t border-white/5 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+      <div className="absolute -left-32 top-32 w-64 h-64 bg-secondary/10 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Built for Modern Educators</h2>
+          <p className="text-slate-400 font-medium text-lg max-w-2xl mx-auto">Everything you need to create engaging learning experiences, packed into one powerful platform.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {[
-            { title: "Lightning Fast", desc: "Create professional quizzes in under 60 seconds with our AI-powered quiz builder.", icon: <Zap size={32} />, color: "bg-card-red" },
-            { title: "Live Gameplay", desc: "Host exciting real-time quiz sessions with hundreds of students simultaneously.", icon: <Users size={32} />, color: "bg-card-blue" },
-            { title: "Smart Analytics", desc: "Track progress with detailed insights and identify areas where students need help.", icon: <BarChart2 size={32} />, color: "bg-card-green" },
+            { title: "Lightning Fast Engine", desc: "Create professional quizzes in under 60 seconds with our advanced AI-powered generator.", icon: <Zap size={28} />, color: "text-accent", bg: "bg-accent/10", border: "border-accent/20" },
+            { title: "Live Multiplayer", desc: "Host exciting real-time quiz sessions with hundreds of students simultaneously with zero lag.", icon: <Users size={28} />, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20" },
+            { title: "Smart Analytics API", desc: "Track progress with detailed insights, identify knowledge gaps, and export reports instantly.", icon: <BarChart2 size={28} />, color: "text-green-400", bg: "bg-green-400/10", border: "border-green-400/20" },
           ].map((feature, i) => (
-            <div key={i} className="p-8 rounded-3xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all text-center group">
-              <div className={`w-16 h-16 rounded-2xl ${feature.color} flex items-center justify-center text-white mx-auto mb-6 shadow-lg transform group-hover:scale-110 transition-transform`}>
+            <div key={i} className="p-8 rounded-3xl glass-card group text-left relative overflow-hidden">
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500`} />
+
+              <div className={`w-16 h-16 rounded-2xl ${feature.bg} ${feature.border} border flex items-center justify-center ${feature.color} mb-8 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-              <p className="text-gray-500 leading-relaxed text-sm">{feature.desc}</p>
+              <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
+              <p className="text-slate-400 leading-relaxed text-sm">{feature.desc}</p>
+
+              <div className="mt-8 flex items-center text-sm font-bold text-white group-hover:text-primary-light transition-colors">
+                Learn more <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </div>
             </div>
           ))}
         </div>
@@ -271,140 +316,162 @@ const AISection = () => {
       localStorage.setItem('ai_attempts', newAttempts.toString());
 
       setResult([
-        `What is the main concept of ${prompt}?`,
-        `Explain the importance of ${prompt} in modern context.`,
-        `Which of the following is NOT related to ${prompt}?`,
-        `True or False: ${prompt} was discovered in the 20th century.`
+        `What is the central mechanism behind ${prompt}?`,
+        `Analyze the impact of ${prompt} on contemporary society.`,
+        `Which of the following elements is NOT associated with ${prompt}?`,
+        `True or False: The fundamental principles of ${prompt} were established recently.`
       ]);
       setIsGenerating(false);
     }, 2000);
   };
 
   return (
-    <section className="py-24 bg-purple-50 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-32 bg-slate-950 relative overflow-hidden">
+      {/* Background Gradients */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-950/50 pointer-events-none" />
+      <div className="absolute -right-1/4 top-0 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-16">
+
+          {/* Left Content */}
           <div className="flex-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-purple-100 text-primary text-xs font-bold uppercase tracking-wider mb-6">
-              <Sparkles size={14} /> AI-Powered
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 text-primary-light text-xs font-bold uppercase tracking-widest mb-8 border border-primary/30">
+              <Sparkles size={14} className="animate-pulse" /> Neural Engine
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
-              Create Quizzes in Seconds with AI Magic
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-[1.1]">
+              Generate Magic <br />in <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400">Seconds</span>
             </h2>
-            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              Just describe your topic and let our AI generate engaging questions, multiple choice answers, and even explanations.
+            <p className="text-lg text-slate-400 mb-10 leading-relaxed font-light">
+              Just describe your topic and watch as our advanced AI constructs engaging questions, plausible distractors, and detailed explanations instantly.
             </p>
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-bold text-gray-900">Try it out!</span>
-                <span className={`text-sm font-bold ${attempts > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                  {attempts} free generations left
+            <div className="glass-card p-6 rounded-3xl mb-10 border border-white/10 relative overflow-hidden bg-slate-900/80">
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_3s_infinite]" />
+
+              <div className="flex items-center justify-between mb-4 relative z-10">
+                <span className="font-bold text-white flex items-center gap-2"><Zap size={16} className="text-accent" /> Try the Sandbox</span>
+                <span className={`text-xs font-bold px-3 py-1 rounded-full ${attempts > 0 ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                  {attempts} free generations
                 </span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-3 relative z-10">
                 <input
                   type="text"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="e.g., Solar System, World War II, Photosynthesis"
-                  className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-primary transition-colors"
+                  placeholder="e.g., Quantum Physics, The Renaissance..."
+                  className="flex-1 px-5 py-4 bg-slate-950/50 border border-slate-700/50 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                   onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
                 />
                 <button
                   onClick={handleGenerate}
                   disabled={isGenerating || !prompt.trim()}
-                  className="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-8 py-4 bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
                 >
                   {isGenerating ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-slate-900/30 border-t-slate-900 rounded-full animate-spin" />
                   ) : (
                     <Sparkles size={20} />
                   )}
-                  Generate
+                  {isGenerating ? 'Synthesizing...' : 'Generate'}
                 </button>
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-6">
               {[
-                { title: "Instant Generation", desc: "Create complete quizzes with 10+ questions in under a minute" },
-                { title: "Save Time", desc: "Spend less time preparing and more time teaching" },
-                { title: "High Quality", desc: "AI ensures diverse, engaging questions every time" }
+                { title: "Context Aware", desc: "Adapts to grade levels" },
+                { title: "Export Ready", desc: "Directly to Kahoot/CSV" },
               ].map((item, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-primary mt-1 flex-shrink-0">
-                    <Zap size={14} fill="currentColor" />
+                <div key={i} className="flex gap-4 items-start">
+                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary-light mt-1 flex-shrink-0 border border-primary/30">
+                    <Check size={16} strokeWidth={3} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900">{item.title}</h4>
-                    <p className="text-sm text-gray-500">{item.desc}</p>
+                    <h4 className="font-bold text-white">{item.title}</h4>
+                    <p className="text-sm text-slate-500 mt-1">{item.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="flex-1 w-full">
-            <div className="bg-white rounded-3xl shadow-2xl p-6 border border-gray-100 relative overflow-hidden min-h-[400px]">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-secondary"></div>
+          {/* Right Content - Mockup */}
+          <div className="flex-1 w-full perspective-1000">
+            <div className="rounded-3xl shadow-2xl bg-neutral-900 border border-neutral-800 relative overflow-hidden min-h-[450px] transform md:rotate-y-[-5deg] md:rotate-x-[5deg] transition-transform duration-700 hover:rotate-0">
 
-              <div className="flex items-center gap-2 mb-6 text-gray-400 text-xs font-medium uppercase tracking-wider">
-                <Sparkles size={14} /> AI Quiz Generator
+              {/* Mockup Header */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-neutral-950 border-b border-neutral-800">
+                <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                <div className="mx-auto flex items-center gap-2 bg-neutral-900 px-3 py-1 rounded-md border border-neutral-800 text-neutral-500 text-xs font-mono">
+                  <Sparkles size={12} /> engine.testhub.ai
+                </div>
               </div>
 
-              {result ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-purple-50 rounded-xl p-4 border border-purple-100"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xs font-bold text-primary bg-white px-2 py-1 rounded shadow-sm">Generated Quiz: {prompt}</span>
-                  </div>
-                  <div className="space-y-3">
+              <div className="p-6">
+                {result ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="space-y-4"
+                  >
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 text-primary-light rounded-lg text-xs font-mono mb-2">
+                      &gt; Generated Module: {prompt}
+                    </div>
                     {result.map((q, i) => (
-                      <div key={i} className="flex gap-3 text-sm text-gray-700">
-                        <span className="font-bold text-primary">{i + 1}.</span>
-                        <span>{q}</span>
+                      <div key={i} className="flex gap-4 p-4 rounded-xl bg-neutral-800/50 border border-neutral-700/50 text-slate-300 text-sm">
+                        <span className="font-mono text-primary-light">{i + 1}.</span>
+                        <div className="space-y-3 flex-1">
+                          <p className="font-medium text-white">{q}</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="h-2 bg-neutral-700 rounded w-full"></div>
+                            <div className="h-2 bg-neutral-700 rounded w-5/6"></div>
+                          </div>
+                        </div>
                       </div>
                     ))}
-                    <div className="text-xs text-gray-400 pl-6">+ 6 more questions</div>
+                  </motion.div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
+                    <div className="relative mb-6">
+                      <div className="w-20 h-20 rounded-full border border-neutral-700 flex items-center justify-center relative z-10 bg-neutral-900">
+                        <Zap size={32} className="text-neutral-500" />
+                      </div>
+                      <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping"></div>
+                    </div>
+                    <p className="text-neutral-500 font-mono text-sm">WAITING FOR INPUT...</p>
                   </div>
-                </motion.div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-64 text-center text-gray-400">
-                  <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                    <Sparkles size={32} className="text-gray-300" />
-                  </div>
-                  <p>Enter a topic to see the magic happen!</p>
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Premium Modal Overlay */}
               {showPremiumModal && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-20 p-6">
+                <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-20 p-6">
                   <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="bg-white rounded-2xl shadow-2xl p-8 text-center border border-purple-100 max-w-sm"
+                    className="glass-card rounded-2xl p-8 text-center max-w-sm border-primary/30"
                   >
-                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
+                    <div className="w-16 h-16 bg-gradient-to-br from-accent to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-900 shadow-[0_0_30px_rgba(255,215,0,0.3)] rotate-12">
                       <Sparkles size={32} fill="currentColor" />
                     </div>
-                    <h3 className="text-2xl font-black text-gray-900 mb-2">Upgrade to Premium</h3>
-                    <p className="text-gray-600 mb-6">You've used all your free AI generations. Upgrade now for unlimited quizzes!</p>
+                    <h3 className="text-2xl font-black text-white mb-2">Pro Required</h3>
+                    <p className="text-slate-400 mb-8 text-sm leading-relaxed">Sandbox limit reached. Upgrade to unlock unlimited AI generations and API access.</p>
                     <button
                       onClick={() => setShowPremiumModal(false)}
-                      className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-white font-bold shadow-lg hover:scale-105 transition-transform"
+                      className="w-full py-4 rounded-xl premium-gradient text-white font-bold shadow-[0_0_20px_rgba(124,77,255,0.4)] hover:scale-[1.02] transition-transform"
                     >
-                      Get Unlimited Access
+                      Upgrade Workspace
                     </button>
                     <button
                       onClick={() => setShowPremiumModal(false)}
-                      className="mt-4 text-sm text-gray-500 hover:text-gray-700 font-medium"
+                      className="mt-6 text-sm text-slate-500 hover:text-white font-medium transition-colors"
                     >
-                      Maybe Later
+                      Dismiss
                     </button>
                   </motion.div>
                 </div>
@@ -417,86 +484,258 @@ const AISection = () => {
   );
 };
 
+const PaymentModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  const [step, setStep] = useState<1 | 2>(1);
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [tid, setTid] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async () => {
+    setIsProcessing(true);
+    setError('');
+
+    try {
+      await addDoc(collection(db, 'subscription_requests'), {
+        userId: 'guest',
+        userName: 'Guest User',
+        userEmail: email,
+        userRole: 'instructor',
+        planId: 'premium_monthly',
+        amount: 3500,
+        transactionId: tid,
+        senderPhone: phone,
+        status: 'pending',
+        createdAt: serverTimestamp()
+      });
+
+      setStep(2);
+    } catch (err: any) {
+      console.error('Failed to submit payment request:', err);
+      setError('Failed to submit request. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
+      >
+        {/* Header (Easypaisa Green) */}
+        <div className="bg-[#00A15F] p-6 text-center">
+          <h3 className="text-2xl font-black text-white tracking-tight flex items-center justify-center gap-2">
+            easypaisa
+          </h3>
+          <p className="text-green-100 text-sm mt-1 font-medium">Manual Transfer Verification</p>
+        </div>
+
+        <div className="p-8">
+          {step === 1 && (
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+              <div className="mb-6 p-4 bg-green-50 rounded-xl border border-green-100 text-center">
+                <span className="text-slate-600 text-sm font-bold block mb-1">Please send Rs. 3,500 to:</span>
+                <div className="text-2xl font-black text-[#00A15F] tracking-wider mb-1">0300 1234567</div>
+                <div className="text-slate-500 text-xs font-medium uppercase tracking-widest">Account Title: Test Hub Admin</div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Your Account Email</label>
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00A15F] focus:border-transparent font-medium text-slate-900 transition-all placeholder:font-normal"
+                    required
+                  />
+                  <p className="text-xs text-slate-500 mt-1">So we can link this payment to your account.</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Sender Mobile Number</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">+92</span>
+                    <input
+                      type="tel"
+                      placeholder="3XX XXXXXXX"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      className="w-full pl-14 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00A15F] focus:border-transparent font-medium text-slate-900 transition-all placeholder:font-normal"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Transaction ID (TID)</label>
+                  <input
+                    type="text"
+                    placeholder="Enter 11-digit TID"
+                    value={tid}
+                    onChange={(e) => setTid(e.target.value.replace(/\D/g, '').slice(0, 11))}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00A15F] focus:border-transparent font-medium text-slate-900 transition-all placeholder:font-normal"
+                  />
+                  <p className="text-xs text-slate-500 mt-2">You will receive a TID via SMS from 3737 after sending the payment.</p>
+                </div>
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={phone.length < 10 || tid.length < 5 || isProcessing}
+                  className="w-full py-4 mt-2 bg-[#00A15F] text-white rounded-xl font-bold hover:bg-[#008F54] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[#00A15F]/20"
+                >
+                  {isProcessing ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : null}
+                  {isProcessing ? 'Submitting...' : 'Submit Request'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-6">
+              <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-500">
+                <Check size={40} strokeWidth={3} />
+              </div>
+              <h4 className="text-2xl font-black text-slate-900 mb-2">Request Submitted!</h4>
+              <p className="text-slate-500 mb-8 leading-relaxed">
+                Your payment reference has been sent to the admin panel.
+                Your account will be upgraded to <strong className="text-slate-800">Test Hub Pro</strong> as soon as the transaction is verified (usually within 15-30 minutes).
+              </p>
+
+              <button
+                onClick={onClose}
+                className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
+              >
+                Return to Dashboard
+              </button>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/10 text-white hover:bg-black/20 transition-colors"
+        >
+          <X size={18} strokeWidth={3} />
+        </button>
+      </motion.div>
+    </div>
+  );
+};
+
 const Pricing = () => {
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   const plans = [
     {
-      name: "Basic",
+      name: "Starter",
       price: "Free",
-      desc: "Perfect for trying out Test Hub with your class.",
-      features: ["3 AI Generations daily", "Up to 50 players per game", "Basic analytics", "Standard support"],
+      desc: "Perfect for evaluating the platform.",
+      features: ["3 AI Generations daily", "Up to 50 concurrent players", "Basic analytics export", "Community support"],
       cta: "Current Plan",
-      premium: false
+      premium: false,
+      onClick: () => { }
     },
     {
       name: "Pro",
-      price: "Rs. 5,000",
-      period: "/month",
-      desc: "Best for active teachers who want the full AI power.",
-      features: ["Unlimited AI Generations", "Up to 200 players per game", "Advanced reports & insights", "Priority email support", "Custom quiz branding"],
-      cta: "Upgrade to Pro",
-      premium: true
+      price: "Rs. 3,500",
+      period: "/mo",
+      desc: "For educators who need full power & scale.",
+      features: ["Unlimited AI Engine Access", "Up to 500 concurrent players", "Advanced behavioral analytics", "Priority 24/7 support", "Custom branding"],
+      cta: "Upgrade via easypaisa",
+      premium: true,
+      onClick: () => setShowPaymentModal(true)
     },
     {
-      name: "School",
+      name: "Enterprise",
       price: "Custom",
-      desc: "For entire departments and schools looking for scale.",
-      features: ["Everything in Pro", "School-wide collaboration", "SSO integration", "Dedicated success manager", "LMS Integration"],
+      desc: "For entire districts and organizations.",
+      features: ["Everything in Pro", "Unlimited concurrent players", "SSO (SAML/OAuth) integration", "Dedicated account manager", "LMS Integration (Canvas/Moodle)"],
       cta: "Contact Sales",
-      premium: false
+      premium: false,
+      onClick: () => { }
     }
   ];
 
   return (
-    <section id="pricing" className="py-24 bg-gray-50 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-black text-gray-900 mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-gray-600 font-medium max-w-2xl mx-auto">
-            Choose the plan that's right for you and your students. No hidden fees.
+    <section id="pricing" className="py-32 bg-slate-900 overflow-hidden relative border-t border-slate-800">
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02]"></div>
+
+      <PaymentModal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Transparent Scaling</h2>
+          <p className="text-slate-400 font-medium text-lg max-w-2xl mx-auto">
+            Choose the tier that matches your deployment size. No hidden fees or complex contracts. Local payments supported via <span className="text-[#00A15F] font-bold">easypaisa</span>.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 items-center max-w-5xl mx-auto">
           {plans.map((plan, i) => (
             <div
               key={i}
-              className={`p-8 rounded-[2.5rem] bg-white border transition-all duration-300 relative hover:shadow-2xl hover:-translate-y-2 ${plan.premium ? 'border-primary ring-4 ring-primary/5 shadow-xl' : 'border-gray-100 shadow-sm'
+              className={`p-8 rounded-[2rem] glass-card transition-all duration-300 relative group ${plan.premium ? 'md:-translate-y-4 border-[#00A15F]/50 bg-slate-800/80 shadow-[0_0_50px_rgba(0,161,95,0.15)] pb-12' : 'border-slate-800'
                 }`}
             >
               {plan.premium && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1.5 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-full">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#00A15F] text-white text-xs font-black uppercase tracking-widest rounded-full shadow-lg whitespace-nowrap">
                   Most Popular
                 </div>
               )}
+
               <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-black text-gray-900">{plan.price}</span>
-                  {plan.period && <span className="text-gray-500 font-bold">{plan.period}</span>}
+                  <span className={`text-4xl font-black ${plan.premium ? 'text-white' : 'text-slate-200'}`}>{plan.price}</span>
+                  {plan.period && <span className="text-slate-500 font-bold">{plan.period}</span>}
                 </div>
-                <p className="text-gray-500 text-sm leading-relaxed">{plan.desc}</p>
+                <p className="text-slate-400 text-sm leading-relaxed">{plan.desc}</p>
               </div>
 
               <div className="space-y-4 mb-10">
                 {plan.features.map((feature, j) => (
-                  <div key={j} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-green-50 flex items-center justify-center text-green-500 flex-shrink-0">
+                  <div key={j} className="flex items-start gap-3">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${plan.premium ? 'bg-[#00A15F]/20 text-[#00A15F]' : 'bg-slate-800 text-slate-400'}`}>
                       <Check size={12} strokeWidth={3} />
                     </div>
-                    <span className="text-sm text-gray-600 font-medium">{feature}</span>
+                    <span className={`text-sm font-medium ${plan.premium ? 'text-slate-200' : 'text-slate-400'}`}>{feature}</span>
                   </div>
                 ))}
               </div>
 
-              <Link
-                href="/login"
-                className={`block w-full text-center py-4 rounded-2xl font-black transition-all ${plan.premium
-                  ? 'bg-primary text-white shadow-lg hover:bg-purple-700 hover:shadow-primary/30'
-                  : 'bg-gray-50 text-gray-900 hover:bg-gray-100'
-                  }`}
-              >
-                {plan.cta}
-              </Link>
+              {plan.premium ? (
+                <button
+                  onClick={plan.onClick}
+                  className="w-full py-4 rounded-xl font-bold transition-all bg-[#00A15F] text-white shadow-lg hover:shadow-[#00A15F]/20 hover:scale-105 hover:bg-[#008F54] flex items-center justify-center gap-2"
+                >
+                  <span className="w-4 h-4 rounded-full bg-white flex items-center justify-center"><Zap size={10} className="text-[#00A15F]" /></span>
+                  {plan.cta}
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="block w-full text-center py-4 rounded-xl font-bold transition-all bg-slate-800 text-white hover:bg-slate-700"
+                >
+                  {plan.cta}
+                </Link>
+              )}
             </div>
           ))}
         </div>
@@ -507,20 +746,24 @@ const Pricing = () => {
 
 const CTA = () => {
   return (
-    <section className="py-24 bg-gradient-to-br from-[#7C4DFF] to-[#651fff] text-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+    <section className="py-32 bg-[#020617] text-center relative overflow-hidden border-t border-slate-800">
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent"></div>
+
       <div className="max-w-4xl mx-auto px-4 relative z-10">
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-          Ready to Transform Your Classroom?
+        <h2 className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tight">
+          Ready to Deploy?
         </h2>
-        <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-          Join thousands of teachers worldwide making learning fun with interactive AI-powered quizzes.
+        <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+          Join thousands of institutions already using Test Hub to supercharge their learning environments.
         </p>
-        <Link href="/login" className="px-10 py-4 rounded-full bg-white text-primary font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all inline-flex items-center gap-2 mx-auto">
-          <Play size={20} fill="currentColor" />
-          Start Creating Free
+        <Link href="/signup" className="group relative inline-block">
+          <div className="absolute -inset-1 premium-gradient rounded-full blur opacity-70 group-hover:opacity-100 transition duration-500"></div>
+          <div className="relative px-12 py-5 bg-slate-900 rounded-full leading-none flex items-center gap-3 text-white font-bold text-lg hover:bg-slate-800 transition-colors">
+            <Rocket size={20} className="text-accent" />
+            Launch Platform
+          </div>
         </Link>
-        <p className="mt-6 text-white/60 text-sm">No credit card required — Free forever</p>
+        <p className="mt-8 text-slate-600 text-sm font-medium">No credit card required • Deploy in seconds</p>
       </div>
     </section>
   );
@@ -528,26 +771,25 @@ const CTA = () => {
 
 const Footer = () => {
   return (
-    <footer className="bg-white py-12 border-t border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
-            <GraduationCap size={20} fill="currentColor" />
+    <footer className="bg-[#020617] py-16 border-t border-slate-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
+        <div className="flex items-center justify-center gap-3 mb-10">
+          <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary-light border border-primary/30">
+            <GraduationCap size={24} fill="currentColor" />
           </div>
-          <span className="text-xl font-bold text-gray-900">Test Hub</span>
+          <span className="text-2xl font-black text-white">Test Hub</span>
         </div>
 
-        <div className="flex justify-center gap-8 text-sm text-gray-500 mb-8">
-          <Link href="/about" className="hover:text-primary transition-colors">About Us</Link>
-          <Link href="/#features" className="hover:text-primary transition-colors">Features</Link>
-          <Link href="/#pricing" className="hover:text-primary transition-colors">Pricing</Link>
-          <Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
-          <Link href="/terms" className="hover:text-primary transition-colors">Terms</Link>
-          <a href="/login" className="hover:text-primary font-bold transition-colors">Admin Portal</a>
-          <Link href="/support" className="hover:text-primary transition-colors">Support</Link>
+        <div className="flex justify-center gap-8 text-sm font-semibold mb-10">
+          <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
+          <Link href="/#features" className="hover:text-white transition-colors">Features</Link>
+          <Link href="/#pricing" className="hover:text-white transition-colors">Pricing</Link>
+          <Link href="/privacy" className="hover:text-white transition-colors">Privacy API</Link>
+          <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+          <Link href="/support" className="hover:text-white transition-colors">System Support</Link>
         </div>
 
-        <p className="text-gray-400 text-sm">© 2025 Test Hub. All rights reserved.</p>
+        <p className="text-slate-600 text-sm">© {new Date().getFullYear()} Test Hub AI Platform. All rights reserved.</p>
       </div>
     </footer>
   );

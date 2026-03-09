@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 
-const inter = Inter({ subsets: ["latin"] });
+const outfit = Outfit({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Test Hub - AI Powered Learning",
@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning={true}>
-      <body className={inter.className} suppressHydrationWarning={true}>
+    <html lang="en" className="dark" suppressHydrationWarning={true}>
+      <body className={`${outfit.className} bg-slate-950 text-slate-50 selection:bg-primary/30`} suppressHydrationWarning={true}>
         <AuthProvider>
           {children}
         </AuthProvider>
