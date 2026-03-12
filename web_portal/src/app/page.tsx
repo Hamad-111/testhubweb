@@ -23,6 +23,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuth } from '@/context/AuthContext';
 
 // --- Components ---
 
@@ -49,7 +50,7 @@ const Navbar = () => {
               <GraduationCap size={24} fill="currentColor" />
             </div>
             <span className="text-2xl font-black text-white tracking-tight">
-              Test Hub
+              TestHub
             </span>
           </Link>
 
@@ -62,7 +63,7 @@ const Navbar = () => {
               Pricing
             </Link>
             <Link href="/join" className="text-slate-300 hover:text-white text-sm font-semibold transition-colors flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-accent"></div>
               Join Game
             </Link>
             <div className="flex items-center gap-4 ml-4">
@@ -97,8 +98,8 @@ const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-slate-950">
       {/* Background Orbs */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/40 rounded-full blur-[120px] animate-pulse pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-secondary/30 rounded-full blur-[150px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/40 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-secondary/30 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none mix-blend-overlay" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 w-full">
@@ -110,10 +111,9 @@ const Hero = () => {
           className="inline-flex items-center gap-3 px-5 py-2 rounded-full glass border-white/20 text-white mb-10 mx-auto"
         >
           <div className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
           </div>
-          <span className="text-sm font-bold tracking-wide uppercase">Generative AI Engine 2.0</span>
+          <span className="text-sm font-bold tracking-wide uppercase">Generative AI Workspace</span>
         </motion.div>
 
         {/* Headline */}
@@ -166,9 +166,9 @@ const Hero = () => {
           className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto"
         >
           {[
-            { label: "Active Daily Players", value: "10K+", icon: <Users size={20} className="text-blue-400" /> },
-            { label: "AI Quizzes Created", value: "50K+", icon: <Sparkles size={20} className="text-accent" /> },
-            { label: "Schools Worldwide", value: "500+", icon: <Globe size={20} className="text-green-400" /> },
+            { label: "Active Early Users", value: "25+", icon: <Users size={20} className="text-blue-400" /> },
+            { label: "AI Quizzes Created", value: "150+", icon: <Sparkles size={20} className="text-accent" /> },
+            { label: "Partner Institutions", value: "5+", icon: <Globe size={20} className="text-green-400" /> },
           ].map((stat, i) => (
             <div key={i} className="p-6 rounded-2xl glass-card flex items-center gap-6 text-left hover:-translate-y-1 transition-transform">
               <div className="w-14 h-14 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0">
@@ -189,62 +189,6 @@ const Hero = () => {
   );
 };
 
-const TrendingQuizzes = () => {
-  const quizzes = [
-    { title: "World Geography Challenge", questions: 15, plays: "9.3k", image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=400", hue: "from-blue-500/20" },
-    { title: "Science Fundamentals", questions: 19, plays: "4.2k", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=400", hue: "from-purple-500/20" },
-    { title: "Math Quick Quiz", questions: 10, plays: "8.5k", image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=400", hue: "from-green-500/20" },
-    { title: "History Trivia", questions: 12, plays: "7.3k", image: "https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&q=80&w=400", hue: "from-orange-500/20" },
-  ];
-
-  return (
-    <section className="py-32 bg-slate-950 relative z-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">Trending Now</h2>
-            <p className="text-slate-400 font-medium text-lg">Jump into the most popular live games right now.</p>
-          </div>
-          <button className="hidden md:flex items-center gap-2 group text-white font-bold hover:text-accent transition-colors">
-            View Leaderboard <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {quizzes.map((quiz, i) => (
-            <div key={i} className="group relative rounded-3xl overflow-hidden glass-card p-2 cursor-pointer">
-              {/* Image Container */}
-              <div className="relative h-48 rounded-2xl overflow-hidden mb-4">
-                <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors z-10"></div>
-                {/* Fallback pattern if image is missing */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${quiz.hue} to-transparent z-0`}></div>
-                <img src={quiz.image} alt={quiz.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out" />
-
-                {/* Live Badge */}
-                <div className="absolute top-3 left-3 z-20 px-3 py-1 bg-black/50 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 text-xs font-bold text-white">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                  LIVE
-                </div>
-              </div>
-
-              <div className="px-4 pb-4">
-                <h3 className="font-bold text-white text-xl mb-3 leading-tight group-hover:text-accent transition-colors min-h-[3.5rem]">{quiz.title}</h3>
-                <div className="flex items-center justify-between text-sm text-slate-400">
-                  <span className="flex items-center gap-1.5 bg-slate-800/50 px-3 py-1.5 rounded-lg"><BookOpen size={14} className="text-primary-light" /> {quiz.questions} Qs</span>
-                  <span className="flex items-center gap-1.5 bg-slate-800/50 px-3 py-1.5 rounded-lg"><Users size={14} className="text-secondary-light" /> {quiz.plays}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <button className="md:hidden mt-8 w-full flex justify-center items-center gap-2 py-4 rounded-xl glass text-white font-bold">
-          View All <ArrowRight size={20} />
-        </button>
-      </div>
-    </section>
-  );
-};
 
 const Features = () => {
   return (
@@ -254,15 +198,15 @@ const Features = () => {
       <div className="absolute -left-32 top-32 w-64 h-64 bg-secondary/10 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Built for Modern Educators</h2>
-          <p className="text-slate-400 font-medium text-lg max-w-2xl mx-auto">Everything you need to create engaging learning experiences, packed into one powerful platform.</p>
-        </div>
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Built for Modern Educators</h2>
+            <p className="text-slate-400 font-medium text-lg max-w-2xl mx-auto">Join our early access program and help shape the future of interactive learning.</p>
+          </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {[
             { title: "Lightning Fast Engine", desc: "Create professional quizzes in under 60 seconds with our advanced AI-powered generator.", icon: <Zap size={28} />, color: "text-accent", bg: "bg-accent/10", border: "border-accent/20" },
-            { title: "Live Multiplayer", desc: "Host exciting real-time quiz sessions with hundreds of students simultaneously with zero lag.", icon: <Users size={28} />, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20" },
+            { title: "Live Multiplayer", desc: "Host real-time quiz sessions with your whole class simultaneously with zero lag.", icon: <Users size={28} />, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20" },
             { title: "Smart Analytics API", desc: "Track progress with detailed insights, identify knowledge gaps, and export reports instantly.", icon: <BarChart2 size={28} />, color: "text-green-400", bg: "bg-green-400/10", border: "border-green-400/20" },
           ].map((feature, i) => (
             <div key={i} className="p-8 rounded-3xl glass-card group text-left relative overflow-hidden">
@@ -337,7 +281,7 @@ const AISection = () => {
           {/* Left Content */}
           <div className="flex-1">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 text-primary-light text-xs font-bold uppercase tracking-widest mb-8 border border-primary/30">
-              <Sparkles size={14} className="animate-pulse" /> Neural Engine
+              <Sparkles size={14} /> AI Workspace
             </div>
             <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-[1.1]">
               Generate Magic <br />in <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400">Seconds</span>
@@ -348,7 +292,6 @@ const AISection = () => {
 
             <div className="glass-card p-6 rounded-3xl mb-10 border border-white/10 relative overflow-hidden bg-slate-900/80">
               {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_3s_infinite]" />
 
               <div className="flex items-center justify-between mb-4 relative z-10">
                 <span className="font-bold text-white flex items-center gap-2"><Zap size={16} className="text-accent" /> Try the Sandbox</span>
@@ -402,13 +345,12 @@ const AISection = () => {
           <div className="flex-1 w-full perspective-1000">
             <div className="rounded-3xl shadow-2xl bg-neutral-900 border border-neutral-800 relative overflow-hidden min-h-[450px] transform md:rotate-y-[-5deg] md:rotate-x-[5deg] transition-transform duration-700 hover:rotate-0">
 
-              {/* Mockup Header */}
               <div className="flex items-center gap-2 px-4 py-3 bg-neutral-950 border-b border-neutral-800">
                 <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
                 <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
                 <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
                 <div className="mx-auto flex items-center gap-2 bg-neutral-900 px-3 py-1 rounded-md border border-neutral-800 text-neutral-500 text-xs font-mono">
-                  <Sparkles size={12} /> engine.testhub.ai
+                  <Sparkles size={12} /> Quiz Playground
                 </div>
               </div>
 
@@ -441,9 +383,8 @@ const AISection = () => {
                       <div className="w-20 h-20 rounded-full border border-neutral-700 flex items-center justify-center relative z-10 bg-neutral-900">
                         <Zap size={32} className="text-neutral-500" />
                       </div>
-                      <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping"></div>
                     </div>
-                    <p className="text-neutral-500 font-mono text-sm">WAITING FOR INPUT...</p>
+                    <p className="text-neutral-500 font-mono text-sm uppercase tracking-widest">Sandbox Ready</p>
                   </div>
                 )}
               </div>
@@ -549,7 +490,7 @@ const PaymentModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
               <div className="mb-6 p-4 bg-green-50 rounded-xl border border-green-100 text-center">
                 <span className="text-slate-600 text-sm font-bold block mb-1">Please send Rs. 3,500 to:</span>
                 <div className="text-2xl font-black text-[#00A15F] tracking-wider mb-1">0300 1234567</div>
-                <div className="text-slate-500 text-xs font-medium uppercase tracking-widest">Account Title: Test Hub Admin</div>
+                <div className="text-slate-500 text-xs font-medium uppercase tracking-widest">Account Title: TestHub Admin</div>
               </div>
 
               <div className="space-y-4">
@@ -614,7 +555,7 @@ const PaymentModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
               <h4 className="text-2xl font-black text-slate-900 mb-2">Request Submitted!</h4>
               <p className="text-slate-500 mb-8 leading-relaxed">
                 Your payment reference has been sent to the admin panel.
-                Your account will be upgraded to <strong className="text-slate-800">Test Hub Pro</strong> as soon as the transaction is verified (usually within 15-30 minutes).
+                Your account will be upgraded to <strong className="text-slate-800">TestHub Pro</strong> as soon as the transaction is verified (usually within 15-30 minutes).
               </p>
 
               <button
@@ -641,13 +582,15 @@ const PaymentModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
 
 const Pricing = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
 
   const plans = [
     {
       name: "Starter",
       price: "Free",
       desc: "Perfect for evaluating the platform.",
-      features: ["3 AI Generations daily", "Up to 50 concurrent players", "Basic analytics export", "Community support"],
+      features: ["1 AI Generation daily", "Up to 5 concurrent players", "Basic analytics export", "Community support"],
       cta: "Current Plan",
       premium: false,
       onClick: () => { }
@@ -657,16 +600,22 @@ const Pricing = () => {
       price: "Rs. 3,500",
       period: "/mo",
       desc: "For educators who need full power & scale.",
-      features: ["Unlimited AI Engine Access", "Up to 500 concurrent players", "Advanced behavioral analytics", "Priority 24/7 support", "Custom branding"],
+      features: ["Unlimited AI Engine Access", "Up to 25 concurrent players", "Advanced behavioral analytics", "Priority 24/7 support", "Custom branding"],
       cta: "Upgrade via easypaisa",
       premium: true,
-      onClick: () => setShowPaymentModal(true)
+      onClick: () => {
+        if (!user) {
+          router.push('/login');
+        } else {
+          setShowPaymentModal(true);
+        }
+      }
     },
     {
       name: "Enterprise",
       price: "Custom",
       desc: "For entire districts and organizations.",
-      features: ["Everything in Pro", "Unlimited concurrent players", "SSO (SAML/OAuth) integration", "Dedicated account manager", "LMS Integration (Canvas/Moodle)"],
+      features: ["Everything in Pro", "Up to 100 concurrent players", "SSO (SAML/OAuth) integration", "Dedicated account manager", "LMS Integration (Canvas/Moodle)"],
       cta: "Contact Sales",
       premium: false,
       onClick: () => { }
@@ -754,7 +703,7 @@ const CTA = () => {
           Ready to Deploy?
         </h2>
         <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-          Join thousands of institutions already using Test Hub to supercharge their learning environments.
+          Join our first group of educators already using TestHub to supercharge their learning environments.
         </p>
         <Link href="/signup" className="group relative inline-block">
           <div className="absolute -inset-1 premium-gradient rounded-full blur opacity-70 group-hover:opacity-100 transition duration-500"></div>
@@ -777,7 +726,7 @@ const Footer = () => {
           <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary-light border border-primary/30">
             <GraduationCap size={24} fill="currentColor" />
           </div>
-          <span className="text-2xl font-black text-white">Test Hub</span>
+          <span className="text-2xl font-black text-white">TestHub</span>
         </div>
 
         <div className="flex justify-center gap-8 text-sm font-semibold mb-10">
@@ -789,7 +738,7 @@ const Footer = () => {
           <Link href="/support" className="hover:text-white transition-colors">System Support</Link>
         </div>
 
-        <p className="text-slate-600 text-sm">© {new Date().getFullYear()} Test Hub AI Platform. All rights reserved.</p>
+        <p className="text-slate-600 text-sm">© {new Date().getFullYear()} TestHub AI Platform. All rights reserved.</p>
       </div>
     </footer>
   );
@@ -800,7 +749,6 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white font-sans text-gray-900">
       <Navbar />
       <Hero />
-      <TrendingQuizzes />
       <Features />
       <AISection />
       <Pricing />

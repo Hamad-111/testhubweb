@@ -133,7 +133,7 @@ export default function Login() {
                             >
                                 <GraduationCap size={32} />
                             </motion.div>
-                            <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Log in to Test Hub</h1>
+                            <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Log in to TestHub</h1>
                             <p className="text-xl text-gray-400 font-medium tracking-tight">Select your role to continue your journey</p>
                         </div>
 

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp, query, collection, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { generateQuizQuestions } from "@/app/actions/generateQuiz";
 import { ArrowLeft, Sparkles, Edit3, Clipboard, Rocket, Check, FileText, Upload, Plus, ChevronRight } from "lucide-react";
@@ -29,9 +29,13 @@ export default function CreateQuiz() {
         e.preventDefault();
         if (!user) return;
 
-        if (mode === 'ai' && user.subscriptionStatus !== 'active') {
-            setShowSubscriptionModal(true);
-            return;
+        if (user.subscriptionStatus !== 'active') {
+            const quizzesQuery = query(collection(db, "quizzes"), where("instructorId", "==", user.uid));
+            const quizzesSnapshot = await getDocs(quizzesQuery);
+            if (quizzesSnapshot.size >= 2) {
+                setShowSubscriptionModal(true);
+                return;
+            }
         }
 
         setIsCreating(true);

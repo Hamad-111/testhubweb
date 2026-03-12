@@ -170,7 +170,7 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
                             <div className="bg-gray-50 p-4 rounded-lg">
                                 <h3 className="font-bold mb-2">Payment Details (Easypaisa)</h3>
                                 <p className="text-sm text-gray-600 mb-1">Account Number: <span className="font-mono font-bold text-black">03123456789</span></p>
-                                <p className="text-sm text-gray-600">Account Name: <span className="font-bold text-black">Test Hub Admin</span></p>
+                                <p className="text-sm text-gray-600">Account Name: <span className="font-bold text-black">TestHub Admin</span></p>
                                 <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
                                     <span className="text-sm text-gray-500">Total Amount:</span>
                                     <span className="text-xl font-bold text-[#46178f]">

@@ -75,7 +75,7 @@ export default function Sidebar({ role, userName, isOpen = false, onClose }: Sid
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
                     <div className="relative z-10 flex items-center justify-between">
                         <div className="flex flex-col">
-                            <span className="text-2xl font-black tracking-tighter text-white">TEST HUB</span>
+                            <span className="text-2xl font-black tracking-tighter text-white">TESTHUB</span>
                             <span className="text-[10px] font-bold tracking-[0.2em] text-purple-200 mt-1 uppercase opacity-80">AI Learning Suite</span>
                         </div>
                         <button onClick={onClose} className="md:hidden text-white hover:bg-white/20 p-2 rounded-full transition-all">

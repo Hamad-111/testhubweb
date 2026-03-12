@@ -110,27 +110,58 @@ class _AIQuizGeneratorScreenState extends State<AIQuizGeneratorScreen>
   }
 
   Future<void> _generateQuiz() async {
-    // Subscription Check
-    if (_currentUser?.subscriptionStatus != 'active') {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('💎 Premium Feature'),
-          content: const Text(
-            'AI Quiz Generation is a premium feature.\n\nPlease upgrade your plan on the Web Portal to access this feature.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
-            ),
-          ],
+    // Check if user is loaded
+    if (_currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User profile not loaded yet. Please try again.'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
         ),
       );
       return;
     }
 
+    setState(() => _isProcessing = true);
+
+    try {
+      // Quiz limit check for free tier
+      if (_currentUser!.subscriptionStatus != 'active') {
+        final quizzesSnapshot = await FirebaseFirestore.instance
+            .collection('quizzes')
+            .where('instructorId', isEqualTo: _currentUser!.id)
+            .count()
+            .get();
+        
+        final quizzesCount = quizzesSnapshot.count ?? 0;
+
+        if (quizzesCount >= 2) {
+          if (mounted) {
+            setState(() => _isProcessing = false);
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('💎 Premium Feature'),
+                content: const Text(
+                  'You have reached the limit of 2 free AI generated quizzes.\n\nPlease upgrade your plan on the Web Portal to generate unlimited quizzes.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            );
+          }
+          return;
+        }
+      }
+
     if (_fileContent == null || _fileContent!.isEmpty) {
+      if (mounted) {
+        setState(() => _isProcessing = false);
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please select a file first'),
@@ -142,6 +173,9 @@ class _AIQuizGeneratorScreenState extends State<AIQuizGeneratorScreen>
     }
 
     if (_quizTitle.isEmpty) {
+      if (mounted) {
+        setState(() => _isProcessing = false);
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please enter a quiz title'),
@@ -152,9 +186,6 @@ class _AIQuizGeneratorScreenState extends State<AIQuizGeneratorScreen>
       return;
     }
 
-    setState(() => _isProcessing = true);
-
-    try {
       late List<Question> generatedQuestions;
 
       if (_questionType == 'multiple_choice') {

@@ -6,7 +6,7 @@ import { AuthProvider } from "@/context/AuthContext";
 const outfit = Outfit({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Test Hub - AI Powered Learning",
+  title: "TestHub - AI Powered Learning",
   description: "Create engaging quizzes with AI in seconds and host live games that students absolutely love.",
 };
 

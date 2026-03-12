@@ -150,7 +150,7 @@ export default function Signup() {
                                 <UserPlus size={32} />
                             </motion.div>
                             <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Create your account</h1>
-                            <p className="text-xl text-gray-400 font-medium tracking-tight">How will you be using Test Hub today?</p>
+                            <p className="text-xl text-gray-400 font-medium tracking-tight">How will you be using TestHub today?</p>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-8">
@@ -199,7 +199,7 @@ export default function Signup() {
                             <h2 className="text-3xl font-black text-white mb-2">
                                 {selectedRole === 'student' ? 'Student Signup' : 'Teacher Signup'}
                             </h2>
-                            <p className="text-gray-400 font-medium tracking-tight">Join the Test Hub community</p>
+                            <p className="text-gray-400 font-medium tracking-tight">Join the TestHub community</p>
                         </div>
 
                         <form onSubmit={handleSignup} className="space-y-5">

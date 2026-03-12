@@ -14,7 +14,7 @@ const Nav = () => (
                     <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-white relative group-hover:scale-110 transition-transform">
                         <GraduationCap size={24} fill="currentColor" />
                     </div>
-                    <span className="text-2xl font-black text-white uppercase tracking-tight relative">Test Hub</span>
+                    <span className="text-2xl font-black text-white uppercase tracking-tight relative">TestHub</span>
                 </Link>
                 <Link href="/" className="text-gray-400 hover:text-white font-bold transition-colors">Back to Home</Link>
             </div>
@@ -48,14 +48,14 @@ export default function TermsPage() {
                         <section>
                             <h2 className="text-2xl font-bold text-white mb-4">1. Acceptance of Terms</h2>
                             <p className="leading-relaxed">
-                                By accessing or using Test Hub, you agree to be bound by these Terms of Service. If you do not agree to all of these terms, do not use the service.
+                                By accessing or using TestHub, you agree to be bound by these Terms of Service. If you do not agree to all of these terms, do not use the service.
                             </p>
                         </section>
 
                         <section>
                             <h2 className="text-2xl font-bold text-white mb-4">2. Description of Service</h2>
                             <p className="leading-relaxed">
-                                Test Hub provides an AI-powered platform for generating and hosting interactive quizzes for educational purposes. We reserve the right to modify or discontinue any feature with or without notice.
+                                TestHub provides an AI-powered platform for generating and hosting interactive quizzes for educational purposes. We reserve the right to modify or discontinue any feature with or without notice.
                             </p>
                         </section>
 
@@ -79,14 +79,14 @@ export default function TermsPage() {
                         <section>
                             <h2 className="text-2xl font-bold text-white mb-4">4. Intellectual Property</h2>
                             <p className="leading-relaxed">
-                                All content, trademarks, and data on Test Hub, including but not limited to software, databases, text, and graphics, are the property of Test Hub or licensed to us.
+                                All content, trademarks, and data on TestHub, including but not limited to software, databases, text, and graphics, are the property of TestHub or licensed to us.
                             </p>
                         </section>
 
                         <section>
                             <h2 className="text-2xl font-bold text-white mb-4">5. Limitation of Liability</h2>
                             <p className="leading-relaxed">
-                                Test Hub shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use the service.
+                                TestHub shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use the service.
                             </p>
                         </section>
                     </div>
@@ -95,7 +95,7 @@ export default function TermsPage() {
 
             <footer className="bg-[#0B0F19] py-12 border-t border-white/10 mt-20 relative z-10">
                 <div className="max-w-7xl mx-auto px-4 text-center">
-                    <p className="text-gray-500 text-sm">© 2025 Test Hub. All rights reserved.</p>
+                    <p className="text-gray-500 text-sm">© 2025 TestHub. All rights reserved.</p>
                 </div>
             </footer>
         </div>

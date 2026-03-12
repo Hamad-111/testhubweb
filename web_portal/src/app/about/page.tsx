@@ -14,7 +14,7 @@ const Nav = () => (
                     <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-white relative group-hover:scale-110 transition-transform">
                         <GraduationCap size={24} fill="currentColor" />
                     </div>
-                    <span className="text-2xl font-black text-white uppercase tracking-tight relative">Test Hub</span>
+                    <span className="text-2xl font-black text-white uppercase tracking-tight relative">TestHub</span>
                 </Link>
                 <Link href="/" className="text-gray-400 hover:text-white font-bold transition-colors">Back to Home</Link>
             </div>
@@ -25,7 +25,7 @@ const Nav = () => (
 const Footer = () => (
     <footer className="bg-[#0B0F19] py-12 border-t border-white/10 mt-20 relative z-10">
         <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="text-gray-500 text-sm">© 2025 Test Hub. All rights reserved.</p>
+            <p className="text-gray-500 text-sm">© 2025 TestHub. All rights reserved.</p>
         </div>
     </footer>
 );
@@ -51,7 +51,7 @@ export default function AboutPage() {
                         </div>
                         <h1 className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tight">Making Learning Awesome for Everyone</h1>
                         <p className="text-xl text-gray-400 leading-relaxed">
-                            Test Hub was born out of a simple idea: learning should be as engaging as gaming. We're on a mission to empower teachers and inspire students through interactive AI-powered experiences.
+                            TestHub was born out of a simple idea: learning should be as engaging as gaming. We're on a mission to empower teachers and inspire students through interactive AI-powered experiences.
                         </p>
                     </motion.div>
 
@@ -78,12 +78,12 @@ export default function AboutPage() {
                     </div>
 
                     <div className="prose prose-lg max-w-none text-gray-400">
-                        <h2 className="text-3xl font-black text-white mb-6">The Test Hub Story</h2>
+                        <h2 className="text-3xl font-black text-white mb-6">The TestHub Story</h2>
                         <p className="mb-6">
                             In 2024, a team of educators and developers saw a gap in existing classroom tools. While digital learning was growing, it often lacked the "spark" that keeps students truly engaged. We decided to build a platform that combines the power of Artificial Intelligence with the excitement of live competition.
                         </p>
                         <p className="mb-6">
-                            Today, Test Hub is used by thousands of classrooms to turn boring reviews into epic challenges. Our AI engine helps teachers generate high-quality questions in seconds, giving them more time to focus on what matters most: their students.
+                            Today, TestHub is used by thousands of classrooms to turn boring reviews into epic challenges. Our AI engine helps teachers generate high-quality questions in seconds, giving them more time to focus on what matters most: their students.
                         </p>
                         <div className="p-8 rounded-3xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-white/10 text-white text-center mt-12 shadow-xl relative overflow-hidden">
                             <div className="absolute inset-0 bg-white/5 backdrop-blur-sm -z-10"></div>

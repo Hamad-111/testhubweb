@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../models/user_model.dart';
 import '../../models/notes_model.dart';
 import '../../services/firebase_ai_service.dart';
 import '../../services/file_service.dart';
 import '../../services/firebase_note_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -27,6 +29,7 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
   late AnimationController _fadeController;
   late FirebaseAIService _aiService;
   late FirebaseNoteService _noteService;
+  AppUser? _currentUser;
 
   final List<Map<String, String>> _noteTypes = [
     {'id': 'summary', 'label': 'Summary', 'icon': '📝'},
@@ -45,6 +48,29 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
     _fadeController.forward();
     _aiService = FirebaseAIService();
     _noteService = FirebaseNoteService();
+    _loadCurrentUser();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    try {
+      final authUser = auth.FirebaseAuth.instance.currentUser;
+      if (authUser != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(authUser.uid)
+            .get();
+
+        if (userDoc.exists) {
+          if (mounted) {
+            setState(() {
+              _currentUser = AppUser.fromMap(userDoc.data()!);
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading user: $e');
+    }
   }
 
   Future<void> _pickFile() async {
@@ -77,9 +103,55 @@ class _StudentAINotesGeneratorScreenState extends State<StudentAINotesGeneratorS
 
   Future<void> _generateNotes() async {
     if (_fileContent == null) return;
+    
+    // Check if user is loaded
+    if (_currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User profile not loaded yet. Please try again.'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
     setState(() => _isProcessing = true);
 
     try {
+      // Notes limit check for free tier
+      if (_currentUser!.subscriptionStatus != 'active') {
+        final notesSnapshot = await FirebaseFirestore.instance
+            .collection('notes')
+            .where('userId', isEqualTo: _currentUser!.id)
+            .count()
+            .get();
+        
+        final notesCount = notesSnapshot.count ?? 0;
+
+        if (notesCount >= 3) {
+          if (mounted) {
+            setState(() => _isProcessing = false);
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('💎 Premium Feature'),
+                content: const Text(
+                  'You have reached the limit of 3 free AI generated notes.\n\nPlease upgrade your plan on the Web Portal to generate unlimited notes.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            );
+          }
+          return;
+        }
+      }
+
       final summary = await _aiService.analyzeDocument(_fileContent!, noteType: _selectedNoteType);
       setState(() => _generatedSummary = summary);
       

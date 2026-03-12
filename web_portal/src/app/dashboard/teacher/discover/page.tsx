@@ -73,7 +73,7 @@ export default function DiscoverPage() {
                             Global Discovery
                             <Compass size={28} className="text-primary animate-pulse" />
                         </h1>
-                        <p className="text-slate-500 font-medium mt-1">Explore and leverage professional assessments from the global Test Hub collective.</p>
+                        <p className="text-slate-500 font-medium mt-1">Explore and leverage professional assessments from the global TestHub collective.</p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">

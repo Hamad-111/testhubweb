@@ -93,17 +93,17 @@ export default function JoinGame() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#7C4DFF] to-[#C04DFF] flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen bg-[#0B0F19] text-white font-sans flex flex-col items-center justify-center p-4 relative overflow-hidden">
             {/* Background Elements */}
-            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
-            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-white/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-900/20 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+            <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-900/20 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
             {/* Header */}
             <div className="absolute top-8 left-8 flex items-center gap-2 text-white/80">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
                     <div className="w-3 h-3 bg-white rounded-full"></div>
                 </div>
-                <span className="font-bold">Test Hub</span>
+                <span className="font-bold">TestHub</span>
             </div>
 
             <div className="absolute top-8 right-8 flex items-center gap-4">
@@ -129,14 +129,14 @@ export default function JoinGame() {
                 className="w-full max-w-md text-center z-10"
             >
                 <div className="inline-block px-6 py-2 bg-white/10 backdrop-blur-md rounded-full text-white font-medium mb-8">
-                    Join at <span className="font-bold">testhub.app</span>
+                    Join at <span className="font-bold">TestHub</span>
                 </div>
 
-                <h1 className="text-6xl md:text-7xl font-black text-white mb-2 tracking-tight">testhub.app</h1>
+                <h1 className="text-6xl md:text-7xl font-black text-white mb-2 tracking-tight">TestHub</h1>
 
                 <div className="mt-12 mb-8">
-                    <p className="text-white/80 font-bold text-lg mb-4">Game PIN:</p>
-                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl relative">
+                    <p className="text-gray-400 font-bold text-lg mb-4">Game PIN:</p>
+                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative">
                         <input
                             type="text"
                             value={pin}
@@ -158,7 +158,7 @@ export default function JoinGame() {
                 <button
                     onClick={handleJoin}
                     disabled={loading || authLoading || !pin}
-                    className="w-full py-5 rounded-2xl bg-white text-primary font-black text-xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                    className="w-full py-5 rounded-2xl bg-white text-gray-900 font-black text-xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
                     {loading ? "Joining..." : (authLoading ? "Initializing..." : "Enter")}
                     {!loading && !authLoading && <ArrowRight size={24} strokeWidth={3} />}
                 </button>
@@ -184,19 +184,19 @@ export default function JoinGame() {
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
-                            className="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl"
+                            className="bg-[#0B0F19] border border-white/10 w-full max-w-sm rounded-3xl p-8 shadow-2xl"
                         >
                             <div className="text-center mb-8">
-                                <div className="w-16 h-16 bg-[#F2F2F2] rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <Lock className="text-[#46178f]" size={32} />
+                                <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Lock className="text-white" size={32} />
                                 </div>
-                                <h2 className="text-2xl font-black text-[#333] mb-2">Sign in to Join</h2>
-                                <p className="text-gray-500">You need to identify yourself to play this game.</p>
+                                <h2 className="text-2xl font-black text-white mb-2">Sign in to Join</h2>
+                                <p className="text-gray-400">You need to identify yourself to play this game.</p>
                             </div>
 
                             <button
                                 onClick={handleGoogleSignIn}
-                                className="w-full bg-white border-2 border-gray-200 hover:border-[#46178f] hover:bg-gray-50 text-[#333] font-bold py-4 rounded-xl flex items-center justify-center gap-3 transition-all mb-4"
+                                className="w-full bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 transition-all mb-4"
                             >
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
@@ -205,7 +205,7 @@ export default function JoinGame() {
 
                             <button
                                 onClick={() => setShowLoginModal(false)}
-                                className="w-full text-gray-500 font-bold hover:text-[#333] transition-colors"
+                                className="w-full text-gray-400 font-bold hover:text-white transition-colors"
                             >
                                 Cancel
                             </button>
@@ -215,8 +215,8 @@ export default function JoinGame() {
             </AnimatePresence>
 
             {/* Footer Info */}
-            <div className="absolute bottom-8 text-white/60 text-sm font-medium">
-                Create your own quiz for free at <span className="text-white font-bold">testhub.com</span>
+            <div className="absolute bottom-8 text-gray-500 text-sm font-medium">
+                Create your own quiz for free at <span className="text-white font-bold">TestHub</span>
             </div>
         </div>
     );

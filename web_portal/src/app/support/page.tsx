@@ -14,7 +14,7 @@ const Nav = () => (
                     <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-white relative group-hover:scale-110 transition-transform">
                         <GraduationCap size={24} fill="currentColor" />
                     </div>
-                    <span className="text-2xl font-black text-white uppercase tracking-tight relative">Test Hub</span>
+                    <span className="text-2xl font-black text-white uppercase tracking-tight relative">TestHub</span>
                 </Link>
                 <Link href="/" className="text-gray-400 hover:text-white font-bold transition-colors">Back to Home</Link>
             </div>
@@ -79,9 +79,9 @@ export default function SupportPage() {
                         <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
                             {[
                                 { q: "How do I create an AI quiz?", a: "Simply log in to your dashboard, click 'Create Quiz', and enter a topic. Our AI will handle the rest!" },
-                                { q: "Is Test Hub free for students?", a: "Yes! Students can join games for free using a game PIN. No account is required for students to play." },
+                                { q: "Is TestHub free for students?", a: "Yes! Students can join games for free using a game PIN. No account is required for students to play." },
                                 { q: "How many questions can I generate?", a: "Free accounts get 3 daily generations. Premium users get unlimited access to all AI features." },
-                                { q: "Can I use Test Hub for remote learning?", a: "Absolutely! Test Hub works perfectly on Zoom, Teams, or Google Meet." }
+                                { q: "Can I use TestHub for remote learning?", a: "Absolutely! TestHub works perfectly on Zoom, Teams, or Google Meet." }
                             ].map((faq, i) => (
                                 <div key={i} className="space-y-2">
                                     <h4 className="font-bold text-white text-lg">{faq.q}</h4>
@@ -95,7 +95,7 @@ export default function SupportPage() {
 
             <footer className="bg-[#0B0F19] py-12 border-t border-white/10 mt-20 relative z-10">
                 <div className="max-w-7xl mx-auto px-4 text-center">
-                    <p className="text-gray-500 text-sm">© 2025 Test Hub. All rights reserved.</p>
+                    <p className="text-gray-500 text-sm">© 2025 TestHub. All rights reserved.</p>
                 </div>
             </footer>
         </div>

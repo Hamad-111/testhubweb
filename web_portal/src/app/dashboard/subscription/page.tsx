@@ -66,7 +66,7 @@ export default function SubscriptionPage() {
                                 ) : (
                                     <div className="mb-6">
                                         <p className="text-gray-600 mb-4 leading-relaxed">
-                                            Unlock the full potential of Test Hub with our Premium plan.
+                                            Unlock the full potential of TestHub with our Premium plan.
                                             Generate quizzes with AI, get advanced analytics, and priority support.
                                         </p>
                                         <ul className="space-y-2 mb-6 text-gray-600">
