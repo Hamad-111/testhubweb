@@ -489,7 +489,7 @@ const PaymentModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
               <div className="mb-6 p-4 bg-green-50 rounded-xl border border-green-100 text-center">
                 <span className="text-slate-600 text-sm font-bold block mb-1">Please send Rs. 3,500 to:</span>
-                <div className="text-2xl font-black text-[#00A15F] tracking-wider mb-1">0300 1234567</div>
+                <div className="text-2xl font-black text-[#00A15F] tracking-wider mb-1">03169880264</div>
                 <div className="text-slate-500 text-xs font-medium uppercase tracking-widest">Account Title: TestHub Admin</div>
               </div>
 
