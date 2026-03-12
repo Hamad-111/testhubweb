@@ -101,15 +101,19 @@ export default function CreateQuiz() {
                     setIsParsing(false);
                 }
 
-                const generatedQuestions = await generateQuizQuestions({
+                const result = await generateQuizQuestions({
                     topic: finalTopic,
                     difficulty,
                     questionCount,
                     contextData
                 });
 
+                if (!result.success) {
+                    throw new Error(result.error || 'System failed to synthesize nodes. Please check your configuration.');
+                }
+
                 await updateDoc(doc(db, "quizzes", pin), {
-                    questions: generatedQuestions,
+                    questions: result.questions,
                     isAiGenerated: true,
                     topic: finalTopic,
                     difficulty: difficulty,

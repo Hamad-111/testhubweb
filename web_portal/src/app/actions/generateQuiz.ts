@@ -12,6 +12,10 @@ interface QuizGenerationParams {
 
 export async function generateQuizQuestions({ topic, difficulty, questionCount, contextData }: QuizGenerationParams) {
     try {
+        if (!GROQ_API_KEY) {
+            return { success: false, error: 'GROQ_API_KEY is not configured on the server.' };
+        }
+
         const basePrompt = `
       You are an expert educational quiz creator. Create ${questionCount} engaging questions.
       
@@ -57,10 +61,21 @@ export async function generateQuizQuestions({ topic, difficulty, questionCount, 
         });
 
         if (!response.ok) {
-            throw new Error(`Groq API Error: ${response.status} ${response.statusText}`);
+            const errorText = await response.text();
+            console.error('Groq API Error Response:', errorText);
+            return { 
+                success: false, 
+                error: `Groq AI Error: ${response.status} ${response.statusText}. Please check the server logs.` 
+            };
         }
 
         const data = await response.json();
+        
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+            console.error('Invalid Groq Response Format:', data);
+            return { success: false, error: 'The AI service returned an unexpected response format.' };
+        }
+
         const content = data.choices[0].message.content;
 
         // Clean up content if it contains markdown code blocks
@@ -68,14 +83,23 @@ export async function generateQuizQuestions({ topic, difficulty, questionCount, 
         if (jsonStr.includes('```json')) {
             jsonStr = jsonStr.split('```json')[1].split('```')[0];
         } else if (jsonStr.includes('```')) {
-            jsonStr = jsonStr.split('```')[1].split('```')[0];
+            const parts = jsonStr.split('```');
+            jsonStr = parts.length > 1 ? parts[1] : parts[0];
         }
 
-        const parsedData = JSON.parse(jsonStr);
-        return parsedData.questions;
+        try {
+            const parsedData = JSON.parse(jsonStr);
+            if (!parsedData.questions || !Array.isArray(parsedData.questions)) {
+                throw new Error('JSON missing questions array');
+            }
+            return { success: true, questions: parsedData.questions };
+        } catch (parseError: any) {
+            console.error('Failed to parse AI JSON:', jsonStr);
+            return { success: false, error: `AI responded with invalid data format. Please try again.` };
+        }
 
-    } catch (error) {
-        console.error('Error in generateQuizQuestions:', error);
-        throw new Error('Failed to generate quiz questions');
+    } catch (error: any) {
+        console.error('Critical Error in generateQuizQuestions:', error);
+        return { success: false, error: `Critical System Error: ${error.message}` };
     }
 }
