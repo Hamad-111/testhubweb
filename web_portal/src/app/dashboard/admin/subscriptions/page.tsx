@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/Sidebar";
-import { collection, query, orderBy, getDocs, doc, updateDoc, serverTimestamp, where } from "firebase/firestore";
+import { collection, query, orderBy, getDocs, doc, updateDoc, serverTimestamp, where, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 export default function AdminSubscriptions() {
@@ -82,7 +82,40 @@ export default function AdminSubscriptions() {
                 updatedAt: serverTimestamp()
             });
 
-            alert(`Subscription approved successfully for ${request.userEmail}!`);
+            // 4. Trigger Email Notification (Trigger Email Extension pattern)
+            try {
+                const mailRef = collection(db, "mail");
+                const planName = request.planId.includes('yearly') ? 'Premium Yearly' : 'Pro Monthly';
+                await addDoc(mailRef, {
+                    to: request.userEmail,
+                    message: {
+                        subject: `Welcome to TestHub Pro! 🚀`,
+                        html: `
+                            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                                <h1 style="color: #46178f; text-align: center;">Subscription Activated!</h1>
+                                <p>Hello <strong>${request.userName}</strong>,</p>
+                                <p>Great news! Your payment has been verified and your <strong>TestHub ${planName}</strong> plan is now active.</p>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                                    <p style="margin: 0;"><strong>Plan:</strong> ${planName}</p>
+                                    <p style="margin: 5px 0 0 0;"><strong>Expiry Date:</strong> ${expiry.toLocaleDateString()}</p>
+                                </div>
+                                <p>You now have full access to our AI generation engine, advanced analytics, and all premium features.</p>
+                                <div style="text-align: center; margin-top: 30px;">
+                                    <a href="https://www.test-hub.site/dashboard/teacher" style="background: #46178f; color: white; padding: 12px 25px; text-decoration: none; font-weight: bold; border-radius: 5px;">Go to Dashboard</a>
+                                </div>
+                                <p style="margin-top: 30px; font-size: 12px; color: #777; text-align: center;">If you have any questions, feel free to reply to this email.</p>
+                            </div>
+                        `
+                    },
+                    createdAt: serverTimestamp()
+                });
+                console.log("Email notification queued successfully");
+            } catch (mailErr) {
+                console.error("Failed to queue email notification:", mailErr);
+                // We don't fail the whole approval if email fails
+            }
+
+            alert(`Subscription approved successfully for ${request.userEmail}! Confirmation email sent.`);
             fetchRequests();
         } catch (error: any) {
             console.error("Error approving:", error);
