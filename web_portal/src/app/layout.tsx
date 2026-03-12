@@ -8,7 +8,16 @@ const outfit = Outfit({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "TestHub - AI Powered Learning & Quiz Generation",
   description: "Generate engaging quizzes with AI in seconds. Host live games, analyze student performance, and transform your classroom with TestHub.",
-  keywords: ["AI quiz generator", "interactive learning", "classroom engagement", "online quiz maker", "student analytics", "live quiz hosting", "TestHub AI"],
+  keywords: [
+    "AI quiz generator", "AI question generator", "automated quiz creation", "interactive learning platform", 
+    "educational technology", "student engagement", "live classroom quizzes", "EdTech AI solutions", 
+    "online quiz maker AI", "AI-powered assessment tool", "smart quiz creator", "AI test generator", 
+    "quiz creation software", "free AI quiz maker", "personalized learning AI", "gamified learning", 
+    "test preparation AI", "virtual classroom tools", "AI for educators", "AI in higher education", 
+    "K-12 AI tools", "teaching with AI", "automated grading", "educational AI software", 
+    "best AI for teachers", "create quiz from text AI", "AI lesson planner", "interactive study tools", 
+    "TestHub AI"
+  ],
   authors: [{ name: "TestHub Team" }],
   creator: "TestHub",
   publisher: "TestHub",
