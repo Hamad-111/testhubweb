@@ -42,15 +42,31 @@ export default function AdminSubscriptions() {
 
         setProcessingId(request.id);
         try {
-            // 1. Update Request Status
+            // 1. Resolve target user ID (handle guest submissions)
+            let targetUserId = request.userId;
+
+            if (targetUserId === 'guest') {
+                console.log("Resolving guest user by email:", request.userEmail);
+                const usersRef = collection(db, "users");
+                const q = query(usersRef, where("email", "==", request.userEmail));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    throw new Error(`Critical: No registered user found with email ${request.userEmail}. The user must sign up before you can approve their payment.`);
+                }
+                targetUserId = querySnapshot.docs[0].id;
+                console.log("Resolved guest to real user ID:", targetUserId);
+            }
+
+            // 2. Update Request Status
             await updateDoc(doc(db, "subscription_requests", request.id), {
                 status: 'approved',
                 approvedAt: serverTimestamp(),
-                approvedBy: user?.email
+                approvedBy: user?.email,
+                resolvedUserId: targetUserId // Track which real user this was linked to
             });
 
-            // 2. Update User Subscription Status
-            // Calculate expiry
+            // 3. Update User Subscription Status
             const now = new Date();
             let expiry = new Date();
             if (request.planId.includes('yearly')) {
@@ -59,18 +75,18 @@ export default function AdminSubscriptions() {
                 expiry.setMonth(now.getMonth() + 1);
             }
 
-            await updateDoc(doc(db, "users", request.userId), {
+            await updateDoc(doc(db, "users", targetUserId), {
                 subscriptionStatus: 'active',
                 planId: request.planId,
                 subscriptionExpiry: expiry,
                 updatedAt: serverTimestamp()
             });
 
-            alert("Subscription approved successfully!");
+            alert(`Subscription approved successfully for ${request.userEmail}!`);
             fetchRequests();
         } catch (error: any) {
             console.error("Error approving:", error);
-            alert("Failed to approve: " + error.message);
+            alert("Approval Failed: " + error.message);
         } finally {
             setProcessingId(null);
         }

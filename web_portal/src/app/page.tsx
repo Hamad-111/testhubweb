@@ -427,24 +427,37 @@ const AISection = () => {
 
 const PaymentModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const [step, setStep] = useState<1 | 2>(1);
-  const [email, setEmail] = useState('');
+  const { user } = useAuth();
+  const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState('');
   const [tid, setTid] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
 
+  // Sync email if user logs in while modal is open (rare but good for consistency)
+  useEffect(() => {
+    if (user?.email && !email) {
+      setEmail(user.email);
+    }
+  }, [user, email]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
+    if (!user) {
+      setError('You must be signed in to submit a payment request.');
+      return;
+    }
+
     setIsProcessing(true);
     setError('');
 
     try {
       await addDoc(collection(db, 'subscription_requests'), {
-        userId: 'guest',
-        userName: 'Guest User',
-        userEmail: email,
-        userRole: 'instructor',
+        userId: user.uid,
+        userName: user.displayName || user.email?.split('@')[0] || 'User',
+        userEmail: email || user.email,
+        userRole: user.role || 'instructor',
         planId: 'premium_monthly',
         amount: 3500,
         transactionId: tid,
