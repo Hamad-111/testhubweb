@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /signup
+Allow: /join
+Allow: /about
+Allow: /support
+Allow: /privacy
+Allow: /terms
+
+# Disallow dashboard and private areas
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /admin/
+
+Sitemap: https://www.test-hub.site/sitemap.xml
