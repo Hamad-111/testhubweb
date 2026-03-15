@@ -757,6 +757,65 @@ const Footer = () => {
   );
 };
 
+const FAQ = () => {
+  const faqs = [
+    {
+      q: "What is the best AI quiz generator for teachers?",
+      a: "TestHub is widely considered one of the most powerful AI quiz generators because it doesn't just generate text—it builds fully interactive live games with analytics in seconds."
+    },
+    {
+      q: "Can I create a quiz from a PDF or notes?",
+      a: "Yes! TestHub allows you to upload PDFs or paste your lecture notes, and our AI will automatically extract the key concepts to create a professional assessment."
+    },
+    {
+      q: "Is TestHub free for classrooms?",
+      a: "TestHub offers a generous free tier that includes daily AI generations and live games. For larger classes and unlimited AI access, we offer a Pro plan."
+    },
+    {
+      q: "How does the live game mode work?",
+      a: "Once you create a quiz, you can launch a 'Live Session'. Students join via a simple code on their own devices, and they compete in real-time while you see instant performance data."
+    }
+  ];
+
+  return (
+    <section className="py-32 bg-slate-950 relative border-t border-slate-900">
+      <div className="max-w-4xl mx-auto px-4 relative z-10">
+        <h2 className="text-4xl font-black text-white mb-12 text-center">Frequently Asked Questions</h2>
+        <div className="space-y-6">
+          {faqs.map((faq, i) => (
+            <div key={i} className="p-6 rounded-2xl glass-card border border-white/5 hover:border-primary/20 transition-colors">
+              <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary-light text-sm">Q</div>
+                {faq.q}
+              </h3>
+              <p className="text-slate-400 leading-relaxed pl-11">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Schema.org FAQ Annotation */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqs.map(faq => ({
+              "@type": "Question",
+              "name": faq.q,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.a
+              }
+            }))
+          })
+        }}
+      />
+    </section>
+  );
+};
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
@@ -765,6 +824,7 @@ export default function LandingPage() {
       <Features />
       <AISection />
       <Pricing />
+      <FAQ />
       <CTA />
       <Footer />
     </div>

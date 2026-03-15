@@ -1,0 +1,22 @@
+{
+  "name": "TestHub - AI Powered Learning",
+  "short_name": "TestHub",
+  "description": "Generate engaging quizzes with AI in seconds and host live games that students love.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

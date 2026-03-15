@@ -53,6 +53,12 @@ export const metadata: Metadata = {
     creator: "@testhub_ai",
     images: ["/og-image.png"],
   },
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/manifest.json",
   robots: {
     index: true,
     follow: true,
@@ -75,6 +81,33 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning={true}>
       <body className={`${outfit.className} bg-slate-950 text-slate-50 selection:bg-primary/30`} suppressHydrationWarning={true}>
         <AuthProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": "TestHub",
+                "alternateName": "TestHub AI",
+                "url": "https://www.test-hub.site",
+                "logo": "https://www.test-hub.site/og-image.png",
+                "description": "Generate engaging quizzes with AI in seconds. Host live games and analyze student performance.",
+                "applicationCategory": "EducationalApplication",
+                "operatingSystem": "Web",
+                "offers": {
+                  "@type": "Offer",
+                  "price": "0",
+                  "priceCurrency": "PKR"
+                },
+                "featureList": [
+                  "AI Quiz Generation",
+                  "Live Multiplayer Games",
+                  "Student Analytics",
+                  "PDF to Quiz Conversion"
+                ]
+              })
+            }}
+          />
           {children}
         </AuthProvider>
       </body>
