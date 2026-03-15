@@ -84,7 +84,11 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-white">
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="text-white"
+              aria-label={isOpen ? "Close Menu" : "Open Menu"}
+            >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
@@ -585,6 +589,7 @@ const PaymentModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
         <button
           onClick={onClose}
           className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/10 text-white hover:bg-black/20 transition-colors"
+          aria-label="Close Payment Modal"
         >
           <X size={18} strokeWidth={3} />
         </button>
@@ -752,6 +757,17 @@ const Footer = () => {
         </div>
 
         <p className="text-slate-600 text-sm">© {new Date().getFullYear()} TestHub AI Platform. All rights reserved.</p>
+        
+        {/* SEO Keyword Cloud - Visually Hidden */}
+        <div className="mt-10 opacity-0 h-0 pointer-events-none select-none sr-only">
+          <p>
+            AI quiz generator, automated tests, classroom engagement tools, student performance analytics, 
+            online teaching aids, generative AI for education, best Kahoot alternatives, Quizizz competitors, 
+            teacher-led AI tools, PDF to quiz extraction, lecture notes analyzer, live learning games, 
+            real-time student feedback, educational assessment software, interactive study guides, 
+            premium EdTech platform, TestHub login, join TestHub game.
+          </p>
+        </div>
       </div>
     </footer>
   );
